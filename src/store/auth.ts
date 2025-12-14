@@ -7,8 +7,10 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 interface AuthState {
   user: User | null;
   token: string | null;
+  onboarded: boolean;
   setUser: (user: User) => void;
   setToken: (token: string) => void;
+  setOnboarded: (onboarded: boolean) => void;
   logout: () => void;
 }
 
@@ -17,9 +19,11 @@ export const useAuthStore = create<AuthState>()(
     set => ({
       user: null,
       token: null,
+      onboarded: false,
 
       setUser: (user: User) => set({ user }),
       setToken: (token: string) => set({ token }),
+      setOnboarded: (onboarded: boolean) => set({ onboarded }),
       logout: () => set({ user: null, token: null }),
     }),
     {
