@@ -1,39 +1,53 @@
-import {
-  Montserrat_400Regular,
-  Montserrat_500Medium,
-  Montserrat_600SemiBold,
-  Montserrat_700Bold,
-} from '@expo-google-fonts/montserrat';
-import {
-  Oswald_400Regular,
-  Oswald_500Medium,
-  Oswald_600SemiBold,
-  Oswald_700Bold,
-} from '@expo-google-fonts/oswald';
+// import {
+//   Montserrat_400Regular,
+//   Montserrat_500Medium,
+//   Montserrat_600SemiBold,
+//   Montserrat_700Bold,
+// } from '@expo-google-fonts/montserrat';
+// import {
+//   Oswald_400Regular,
+//   Oswald_500Medium,
+//   Oswald_600SemiBold,
+//   Oswald_700Bold,
+// } from '@expo-google-fonts/oswald';
+// import {
+//   Inter_400Regular,
+//   Inter_500Medium,
+//   Inter_600SemiBold,
+//   Inter_700Bold,
+// } from '@expo-google-fonts/inter';
 
-// Single source of truth - both assets and names
-export const FONTS = {
-  Montserrat_400Regular,
-  Montserrat_500Medium,
-  Montserrat_600SemiBold,
-  Montserrat_700Bold,
-  Oswald_400Regular,
-  Oswald_500Medium,
-  Oswald_600SemiBold,
-  Oswald_700Bold,
-};
+// // Single source of truth - both assets and names
+// export const FONTS = {
+//   Montserrat_400Regular,
+//   Montserrat_500Medium,
+//   Montserrat_600SemiBold,
+//   Montserrat_700Bold,
+//   Oswald_400Regular,
+//   Oswald_500Medium,
+//   Oswald_600SemiBold,
+//   Oswald_700Bold,
+//   Inter_400Regular,
+//   Inter_500Medium,
+//   Inter_600SemiBold,
+//   Inter_700Bold,
+// };
 
-// Extract font family names from the same object
-export const FONT_FAMILY = {
-  montserratRegular: 'Montserrat_400Regular',
-  montserratMedium: 'Montserrat_500Medium',
-  montserratSemiBold: 'Montserrat_600SemiBold',
-  montserratBold: 'Montserrat_700Bold',
-  oswaldRegular: 'Oswald_400Regular',
-  oswaldMedium: 'Oswald_500Medium',
-  oswaldSemiBold: 'Oswald_600SemiBold',
-  oswaldBold: 'Oswald_700Bold',
-};
+// // Extract font family names from the same object
+// export const FONT_FAMILY = {
+//   montserratRegular: 'Montserrat_400Regular',
+//   montserratMedium: 'Montserrat_500Medium',
+//   montserratSemiBold: 'Montserrat_600SemiBold',
+//   montserratBold: 'Montserrat_700Bold',
+//   oswaldRegular: 'Oswald_400Regular',
+//   oswaldMedium: 'Oswald_500Medium',
+//   oswaldSemiBold: 'Oswald_600SemiBold',
+//   oswaldBold: 'Oswald_700Bold',
+//   interRegular: 'Inter_400Regular',
+//   interMedium: 'Inter_500Medium',
+//   interSemiBold: 'Inter_600SemiBold',
+//   interBold: 'Inter_700Bold',
+// };
 
 export const font_size = {
   xs: 12,

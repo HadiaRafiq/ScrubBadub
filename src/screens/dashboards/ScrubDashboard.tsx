@@ -1,0 +1,195 @@
+import React from 'react';
+import { ScrollView, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { moderateScale, verticalScale } from 'react-native-size-matters';
+import { makeStyles, Text, useTheme } from '@rneui/themed';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import Header from '@/components/Header';
+import { useAuthStore } from '@/store/auth';
+
+const ScrubDashboard = () => {
+  const styles = useStyles();
+  const { theme } = useTheme();
+    const { user } = useAuthStore();
+
+  return (
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+          <Header title="Dashboard" />
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}>
+        <View style={styles.content}>
+          <View style={styles.welcomeSection}>
+            <Text style={styles.welcomeTitle}>Welcome, {user?.fullname}!</Text>
+            <Text style={styles.welcomeSubtitle}>
+              Service Provider Dashboard
+            </Text>
+          </View>
+
+          <View style={styles.statsContainer}>
+            <View style={styles.statCard}>
+              <Ionicons
+                name="briefcase-outline"
+                size={moderateScale(32)}
+                color={theme.colors.primary}
+              />
+              <Text style={styles.statValue}>0</Text>
+              <Text style={styles.statLabel}>Active Orders</Text>
+            </View>
+
+            <View style={styles.statCard}>
+              <Ionicons
+                name="cash-outline"
+                size={moderateScale(32)}
+                color={theme.colors.success}
+              />
+              <Text style={styles.statValue}>$0</Text>
+              <Text style={styles.statLabel}>Total Earnings</Text>
+            </View>
+          </View>
+
+          <View style={styles.quickActionsContainer}>
+            <Text style={styles.sectionTitle}>Quick Actions</Text>
+            <View style={styles.actionsGrid}>
+              <View style={styles.actionCard}>
+                <Ionicons
+                  name="add-circle-outline"
+                  size={moderateScale(24)}
+                  color={theme.colors.primary}
+                />
+                <Text style={styles.actionText}>New Service</Text>
+              </View>
+
+              <View style={styles.actionCard}>
+                <Ionicons
+                  name="list-outline"
+                  size={moderateScale(24)}
+                  color={theme.colors.primary}
+                />
+                <Text style={styles.actionText}>View Orders</Text>
+              </View>
+
+              <View style={styles.actionCard}>
+                <Ionicons
+                  name="analytics-outline"
+                  size={moderateScale(24)}
+                  color={theme.colors.primary}
+                />
+                <Text style={styles.actionText}>Earnings</Text>
+              </View>
+
+              <View style={styles.actionCard}>
+                <Ionicons
+                  name="settings-outline"
+                  size={moderateScale(24)}
+                  color={theme.colors.primary}
+                />
+                <Text style={styles.actionText}>Settings</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const useStyles = makeStyles(theme => ({
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
+  content: {
+    paddingHorizontal: moderateScale(20),
+    paddingTop: verticalScale(20),
+    paddingBottom: verticalScale(40),
+  },
+  welcomeSection: {
+    marginBottom: verticalScale(24),
+  },
+  welcomeTitle: {
+    fontSize: moderateScale(28),
+    fontWeight: '700',
+      color: theme.colors.grey2,
+    marginBottom: verticalScale(8),
+  },
+  welcomeSubtitle: {
+    fontSize: moderateScale(16),
+    color: theme.colors.grey2,
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    gap: moderateScale(12),
+    marginBottom: verticalScale(32),
+  },
+  statCard: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: moderateScale(16),
+    padding: moderateScale(20),
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  statValue: {
+    fontSize: moderateScale(24),
+    fontWeight: '700',
+      color: theme.colors.grey2,
+    marginTop: verticalScale(8),
+    marginBottom: verticalScale(4),
+  },
+  statLabel: {
+    fontSize: moderateScale(14),
+    color: theme.colors.grey2,
+    textAlign: 'center',
+  },
+  quickActionsContainer: {
+    marginTop: verticalScale(8),
+  },
+  sectionTitle: {
+    fontSize: moderateScale(20),
+    fontWeight: '600',
+      color: theme.colors.grey2,
+    marginBottom: verticalScale(16),
+  },
+  actionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: moderateScale(12),
+  },
+  actionCard: {
+    width: '47%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: moderateScale(12),
+    padding: moderateScale(20),
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  actionText: {
+    fontSize: moderateScale(14),
+    fontWeight: '500',
+      color: theme.colors.grey2,
+    marginTop: verticalScale(8),
+    textAlign: 'center',
+  },
+}));
+
+export default ScrubDashboard;
+

@@ -2,9 +2,8 @@ import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { makeStyles, Text, useTheme } from '@rneui/themed';
+import { makeStyles, Text } from '@rneui/themed';
 
-import { FONTS } from '@/constants/fonts';
 
 type OnboardingCTAProps = {
   label: string;
@@ -13,7 +12,7 @@ type OnboardingCTAProps = {
 
 const OnboardingCTA: React.FC<OnboardingCTAProps> = ({ label, onPress }) => {
   const styles = useStyles();
-  const { theme } = useTheme();
+  // const { theme } = useTheme();
 
   return (
     <TouchableOpacity
@@ -22,13 +21,13 @@ const OnboardingCTA: React.FC<OnboardingCTAProps> = ({ label, onPress }) => {
       onPress={onPress}>
       <Text style={styles.ctaLabel}>{label}</Text>
       <View style={styles.ctaIcon}>
-        <Icon name="chevron-forward" color={theme.colors.white} size={20} />
+        <Icon name="chevron-forward" color={'#FFFFFF'} size={20} />
       </View>
     </TouchableOpacity>
   );
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(({
   ctaButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -39,20 +38,20 @@ const useStyles = makeStyles(theme => ({
   ctaLabel: {
     fontSize: moderateScale(15),
     fontWeight: '500',
-    color: theme.colors.textAlter,
-    fontFamily: FONTS.INTER,
+    // color: theme.colors.grey2,
+    // fontFamily: FONTS.INTER,
   },
   ctaIcon: {
     height: moderateScale(50),
     width: moderateScale(50),
     borderRadius: moderateScale(25),
-    backgroundColor: theme.colors.text,
+    // backgroundColor: theme.colors.grey2,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: moderateScale(5),
-    borderColor:
-      theme.colors.accentDeep || theme.colors.accent || theme.colors.primary,
-    shadowColor: theme.colors.accent || theme.colors.primary,
+    // borderColor:
+    // theme.colors.primary,
+    // shadowColor: theme.colors.primary,
     shadowOffset: { width: 0, height: moderateScale(-1) },
     shadowOpacity: 0.35,
     shadowRadius: moderateScale(5.8),

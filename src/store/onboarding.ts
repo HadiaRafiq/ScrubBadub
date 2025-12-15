@@ -7,6 +7,7 @@ interface OnboardingState {
   hydrated: boolean;
   setOnboardingCompleted: (onboardingCompleted: boolean) => void;
   setHydrated: (hydrated: boolean) => void;
+  completeOnboarding: () => void;
 }
 
 export const useOnboardingStore = create<OnboardingState>()(
@@ -15,14 +16,18 @@ export const useOnboardingStore = create<OnboardingState>()(
       onboardingCompleted: false,
       hydrated: false,
 
-      setOnboardingCompleted: (onboardingCompleted: boolean) => set({ onboardingCompleted }),
+      setOnboardingCompleted: (onboardingCompleted: boolean) =>
+        set({ onboardingCompleted }),
       setHydrated: (hydrated: boolean) => set({ hydrated }),
-     
+      completeOnboarding: () => set({ onboardingCompleted: true }),
     }),
     {
       name: 'onboarding-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: state => ({ onboardingCompleted: state.onboardingCompleted, hydrated: state.hydrated }),
+      partialize: state => ({
+        onboardingCompleted: state.onboardingCompleted,
+        hydrated: state.hydrated,
+      }),
       onRehydrateStorage: () => state => {
         state?.setHydrated?.(true);
       },

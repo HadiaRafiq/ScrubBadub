@@ -1,0 +1,154 @@
+import React from 'react';
+import { View } from 'react-native';
+import { makeStyles, Text, Button } from '@rneui/themed';
+import { moderateScale, verticalScale } from 'react-native-size-matters';
+
+export type OrderStatus = 'Requested' | 'In Progress' | 'Completed' | 'Pending' | 'Cancelled';
+
+export type OrderCardProps = {
+  title: string;
+  status: OrderStatus;
+  date: string;
+  loadSize: string;
+  price: string;
+  onPrimary?: () => void;
+  onSecondary?: () => void;
+  primaryLabel?: string;
+  secondaryLabel?: string;
+};
+
+const statusColors: Record<OrderStatus, { bg: string; text: string }> = {
+  Requested: { bg: '#FCEEC3', text: '#AD7A05' },
+  'In Progress': { bg: '#E2E8F8', text: '#3150AA' },
+  Completed: { bg: '#DBF6DF', text: '#3A9150' },
+  Pending: { bg: '#FCEBCF', text: '#B88205' },
+  Cancelled: { bg: '#FAD7D7', text: '#C55050' },
+};
+
+const OrderCard: React.FC<OrderCardProps> = ({
+  title,
+  status,
+  date,
+  loadSize,
+  price,
+  onPrimary,
+  onSecondary,
+  primaryLabel = 'View Details',
+  secondaryLabel,
+}) => {
+  const styles = useStyles();
+  const colors = statusColors[status] || statusColors.Requested;
+
+  return (
+    <View style={styles.card}>
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>{title}</Text>
+        <View style={[styles.statusPill, { backgroundColor: colors.bg }]}>
+          <Text style={[styles.statusText, { color: colors.text }]}>{status}</Text>
+        </View>
+      </View>
+      <View style={styles.metaRow}>
+        <Text style={styles.metaText}>{date}</Text>
+        <Text style={styles.price}>{price}</Text>
+      </View>
+      <Text style={styles.metaText}>Load Size: {loadSize}</Text>
+      <View style={styles.actionsRow}>
+        {secondaryLabel && onSecondary && (
+          <Button
+            title={secondaryLabel}
+            type="outline"
+            onPress={onSecondary}
+            buttonStyle={styles.secondaryBtn}
+            titleStyle={styles.secondaryTitle}
+          />
+        )}
+        <Button
+          title={primaryLabel}
+          onPress={onPrimary}
+          buttonStyle={styles.primaryBtn}
+          titleStyle={styles.primaryTitle}
+        />
+      </View>
+    </View>
+  );
+};
+
+const useStyles = makeStyles(theme => ({
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: moderateScale(12),
+    padding: moderateScale(14),
+    gap: verticalScale(6),
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#F2F2F2',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: moderateScale(14),
+    fontWeight: '700',
+    color: '#111827',
+  },
+  statusPill: {
+    paddingHorizontal: moderateScale(10),
+    paddingVertical: verticalScale(4),
+    borderRadius: 12,
+  },
+  statusText: {
+    fontSize: moderateScale(12),
+    fontWeight: '600',
+  },
+  metaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  metaText: {
+    fontSize: moderateScale(12),
+    color: '#6B7280',
+  },
+  price: {
+    fontSize: moderateScale(14),
+    fontWeight: '700',
+    color: '#111827',
+  },
+  actionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: moderateScale(10),
+    marginTop: verticalScale(4),
+  },
+  primaryBtn: {
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: moderateScale(14),
+    paddingVertical: verticalScale(8),
+    borderRadius: 10,
+  },
+  primaryTitle: {
+    fontSize: moderateScale(13),
+    fontWeight: '600',
+  },
+  secondaryBtn: {
+    borderColor: '#E5E7EB',
+    paddingHorizontal: moderateScale(14),
+    paddingVertical: verticalScale(8),
+    borderRadius: 10,
+    backgroundColor: '#F9FAFB',
+  },
+  secondaryTitle: {
+    fontSize: moderateScale(13),
+    fontWeight: '600',
+    color: '#111827',
+  },
+}));
+
+export default OrderCard;
+

@@ -3,7 +3,6 @@ import { TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 import { makeStyles, Text } from '@rneui/themed';
 
-import { FONTS } from '@/constants/fonts';
 
 type OnboardingSkipButtonProps = {
   onPress: () => void;
@@ -23,7 +22,7 @@ const OnboardingSkipButton: React.FC<OnboardingSkipButtonProps> = ({
   );
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(({
   skipRow: {
     alignItems: 'flex-end',
     paddingHorizontal: moderateScale(20),
@@ -31,10 +30,10 @@ const useStyles = makeStyles(theme => ({
     zIndex: 1,
   },
   skipText: {
-    color: theme.colors.text,
+    // color: theme.colors.grey2,
     opacity: 0.6,
     fontSize: moderateScale(14),
-    fontFamily: FONTS.INTER,
+    // fontFamily: FONTS.INTER,
   },
 }));
 

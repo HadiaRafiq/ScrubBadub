@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
-import { makeStyles, useTheme } from '@rneui/themed';
+import { makeStyles, } from '@rneui/themed';
 
 import { Slide } from './onboardingData';
 
@@ -15,7 +15,7 @@ const OnboardingProgressDots: React.FC<OnboardingProgressDotsProps> = ({
   activeIndex,
 }) => {
   const styles = useStyles();
-  const { theme } = useTheme();
+  // const { theme } = useTheme();
 
   if (activeIndex === 0) {
     return null;
@@ -33,7 +33,7 @@ const OnboardingProgressDots: React.FC<OnboardingProgressDotsProps> = ({
             style={[
               styles.dot,
               isActive && {
-                backgroundColor: theme.colors.secondary,
+                // backgroundColor: theme.colors.secondary,
                 width: moderateScale(16),
               },
             ]}
@@ -44,7 +44,7 @@ const OnboardingProgressDots: React.FC<OnboardingProgressDotsProps> = ({
   );
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(({
   progressContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     height: moderateScale(6),
     width: moderateScale(14),
     borderRadius: moderateScale(4),
-    backgroundColor: theme.colors.accentLight,
+    // backgroundColor: theme.colors.accentLight,
   },
 }));
 

@@ -8,14 +8,20 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale } from 'react-native-size-matters';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {
+  NavigationProp,
+  StackActions,
+  useNavigation,
+} from '@react-navigation/native';
 import { makeStyles } from '@rneui/themed';
 
 import OnboardingRail from '@/assets/svgs/OnboardingRail';
-import { useAuthStore } from '@/store/auth';
 import { useOnboardingStore } from '@/store/onboarding';
-import { RootStackParamList, STACKS } from '@/types/routes';
+import {
+  AUTH_ROUTES,
+  RootStackParamList,
+  STACKS,
+} from '@/types/routes';
 
 import OnboardingCTA from './OnboardingCTA';
 import { Slide, slides } from './onboardingData';
@@ -40,9 +46,7 @@ const Onboarding = () => {
   const listRef = useRef<FlatList<Slide>>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { user } = useAuthStore();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { completeOnboarding } = useOnboardingStore();
 
   const handleMomentumEnd = (
@@ -63,7 +67,9 @@ const Onboarding = () => {
   const handleNext = () => {
     if (activeIndex === slides.length - 1) {
       completeOnboarding();
-      navigation.replace(user?._id ? STACKS.APP : STACKS.AUTH);
+      navigation.dispatch(
+        StackActions.replace(STACKS.AUTH, { screen: AUTH_ROUTES.WELCOME }),
+      );
 
       return;
     }
@@ -72,7 +78,9 @@ const Onboarding = () => {
 
   const handleSkip = () => {
     completeOnboarding();
-    navigation.replace(user?._id ? STACKS.APP : STACKS.AUTH);
+    navigation.dispatch(
+      StackActions.replace(STACKS.AUTH, { screen: AUTH_ROUTES.WELCOME }),
+    );
   };
 
   const renderItem = ({ item }: { item: Slide }) => (
@@ -114,10 +122,10 @@ const Onboarding = () => {
   );
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    // backgroundColor: theme.colors.grey2,
   },
   railContainer: {
     position: 'absolute',
