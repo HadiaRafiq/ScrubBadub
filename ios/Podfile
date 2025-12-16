@@ -23,11 +23,13 @@ target 'ScrubBadub' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  # Added for Mapbox (line 27-29)
   pre_install do |installer|
   $RNMapboxMaps.pre_install(installer)
 end
 
   post_install do |installer|
+    # Added for Mapbox (line 33)
      $RNMapboxMaps.post_install(installer)
     react_native_post_install(
       installer,
