@@ -1,6 +1,10 @@
 import axiosInstance from '@/api/axiosInstance';
 import { ENDPOINTS } from '@/api/endpoints';
-import { ScrubOrdersRequest, ScrubOrdersResponse } from '@/types/order';
+import {
+  OrderDetailResponse,
+  ScrubOrdersRequest,
+  ScrubOrdersResponse,
+} from '@/types/order';
 
 export const getScrubOrders = async (
   params?: ScrubOrdersRequest,
@@ -51,4 +55,18 @@ export const getScrubOrders = async (
   }
 
   throw new Error('Failed to fetch scrub orders');
+};
+
+export const getScrubOrderDetail = async (
+  id: string,
+): Promise<OrderDetailResponse> => {
+  const response = await axiosInstance.get<OrderDetailResponse>(
+    ENDPOINTS.SCRUB_ORDER_DETAIL(id),
+  );
+
+  if (response.data) {
+    return response.data;
+  }
+
+  throw new Error('Failed to fetch order details');
 };

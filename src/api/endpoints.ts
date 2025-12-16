@@ -5,4 +5,5 @@ export const ENDPOINTS = {
   VERIFY_EMAIL_OTP: '/auth/verify-email-otp',
   FORGOT_PASSWORD: '/auth/forgot-password',
   SCRUB_ORDERS: '/scrub-orders',
+  SCRUB_ORDER_DETAIL: (id: string) => `/scrub-orders/${id}`,
 };

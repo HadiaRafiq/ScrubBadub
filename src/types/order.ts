@@ -79,3 +79,86 @@ export interface ScrubOrdersResponse {
     items: ScrubOrder[];
   };
 }
+
+export interface OrderStatusHistory {
+  id: string;
+  orderId: string;
+  status: OrderStatus;
+  createdAt: string;
+}
+
+export interface OrderDetailResponse {
+  id: string;
+  loadSize: number;
+  budAddressId: string;
+  orderInstructions: string | null;
+  createdAt: string;
+  budId: string;
+  scrubId: string;
+  selfDelivery: boolean;
+  selfPickup: boolean;
+  statusHistory: OrderStatusHistory[];
+  bud: OrderBudDetail;
+  scrub: OrderScrubDetail;
+  reviews: unknown[];
+  price: OrderPrice;
+  budAddress: OrderAddress;
+  deliveries: OrderDelivery[];
+}
+
+export interface OrderBudDetail extends OrderBud {
+  role: string;
+  email: string;
+  profileImage: string;
+  gender: string;
+  dateOfBirth: string;
+  phone: string;
+  isOnboard: boolean;
+  isActive: boolean;
+  isDeleted: boolean;
+  isApproved: boolean | null;
+  approvedAt: string | null;
+  approvedById: string | null;
+  stripeCustomerId: string | null;
+  stripeConnectedAccountId: string | null;
+  createdAt: string;
+  address: OrderAddress | null;
+}
+
+export interface OrderScrubDetail extends OrderScrub {
+  role: string;
+  email: string;
+  profileImage: string;
+  gender: string;
+  dateOfBirth: string;
+  phone: string;
+  isOnboard: boolean;
+  isActive: boolean;
+  isDeleted: boolean;
+  isApproved: boolean | null;
+  approvedAt: string | null;
+  approvedById: string | null;
+  stripeCustomerId: string | null;
+  stripeConnectedAccountId: string | null;
+  createdAt: string;
+  addresses: OrderAddress[];
+}
+
+export interface OrderDelivery {
+  id: string;
+  price: number;
+  distanceInMeters: number;
+  createdAt: string;
+  duberId: string | null;
+  orderId: string;
+  deliveryType: string;
+  statusHistory: DeliveryStatusHistory[];
+  duber: unknown | null;
+}
+
+export interface DeliveryStatusHistory {
+  id: string;
+  deliveryId: string;
+  status: string;
+  createdAt: string;
+}
