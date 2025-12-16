@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 
-import { sendEmailOtp } from '@/api/authService';
+import { sendEmailOtp } from '@/services/authService';
 import { showSuccessToast } from '@/utils/toast';
 
 export const useSendEmailOtp = () => {

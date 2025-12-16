@@ -25,7 +25,7 @@ export interface User {
   scrubVerificationDetails: null;
 }
 
-interface Address {
+export interface Address {
   id: string;
   label: string;
   address: string;

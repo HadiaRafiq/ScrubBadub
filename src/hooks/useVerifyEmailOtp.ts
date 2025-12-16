@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 
-import { verifyEmailOtp } from '@/api/authService';
+import { verifyEmailOtp } from '@/services/authService';
 import { showErrorToast, showSuccessToast } from '@/utils/toast';
 
 export interface VerifyEmailOtpRequest {

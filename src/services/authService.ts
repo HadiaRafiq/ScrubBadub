@@ -1,75 +1,14 @@
+import axiosInstance from '@/api/axiosInstance';
+import { ENDPOINTS } from '@/api/endpoints';
+import {
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
+  SignInRequest,
+  SignInResponse,
+  SignUpRequest,
+  SignUpResponse,
+} from '@/types/auth';
 import { User } from '@/types/user';
-
-import axiosInstance from './axiosInstance';
-
-export interface SignInRequest {
-  email: string;
-  password: string;
-}
-
-export interface SignInResponse {
-  status: boolean;
-  message?: string;
-  data?: {
-    user: User;
-    authToken: string;
-  };
-}
-
-export interface Address {
-  street?: string;
-  city?: string;
-  state?: string;
-  zipCode?: string;
-  latitude?: number;
-  longitude?: number;
-}
-
-export interface LaundryFacilityDetails {
-  name?: string;
-  description?: string;
-  [key: string]: unknown;
-}
-
-export interface Equipment {
-  [key: string]: unknown;
-}
-
-export interface SignUpRequest {
-  email: string;
-  password: string;
-  fullname: string;
-  phone: string;
-  role: string;
-  emailOtp?: string;
-  gender?: string;
-  dateOfBirth?: string;
-  address?: Address;
-  profileImage?: string;
-  laundryFacilityImages?: string[];
-  laundryFacilityDetails?: LaundryFacilityDetails;
-  equipments?: Equipment;
-  isSmokeFree?: boolean;
-}
-
-export interface SignUpResponse {
-  status: boolean;
-  message?: string;
-  data?: {
-    user: User;
-    token: string;
-  };
-}
-
-export interface ForgotPasswordRequest {
-  email: string;
-}
-
-export interface ForgotPasswordResponse {
-  status: boolean;
-  message?: string;
-  data?: Record<string, unknown>;
-}
 
 export const signIn = async (
   credentials: SignInRequest,
@@ -79,7 +18,7 @@ export const signIn = async (
     authToken: string;
     status?: boolean;
     message?: string;
-  }>('/auth/login', credentials);
+  }>(ENDPOINTS.LOGIN, credentials);
 
   if (response.data?.user && response.data?.authToken) {
     return {
@@ -96,7 +35,7 @@ export const signIn = async (
 
 export const signUp = async (payload: SignUpRequest): Promise<string> => {
   const response = await axiosInstance.post<SignUpResponse>(
-    '/auth/signup',
+    ENDPOINTS.SIGNUP,
     payload,
   );
 
@@ -108,7 +47,7 @@ export const signUp = async (payload: SignUpRequest): Promise<string> => {
 };
 
 export const sendEmailOtp = async (email: string): Promise<string> => {
-  const response = await axiosInstance.post('/auth/send-otp-for-email', {
+  const response = await axiosInstance.post(ENDPOINTS.SEND_EMAIL_OTP, {
     email,
   });
   if (response?.status) {
@@ -125,7 +64,7 @@ export const verifyEmailOtp = async (
   const response = await axiosInstance.post<{
     status: boolean;
     message?: string;
-  }>('/auth/verify-email-otp', { email, otp });
+  }>(ENDPOINTS.VERIFY_EMAIL_OTP, { email, otp });
 
   if (response.data?.status) {
     return response.data?.message || 'OTP verified successfully';
@@ -138,7 +77,7 @@ export const forgotPassword = async (
   payload: ForgotPasswordRequest,
 ): Promise<string> => {
   const response = await axiosInstance.post<ForgotPasswordResponse>(
-    '/auth/forgot-password',
+    ENDPOINTS.FORGOT_PASSWORD,
     payload,
   );
 

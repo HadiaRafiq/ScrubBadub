@@ -1,7 +1,8 @@
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { useMutation } from '@tanstack/react-query';
 
-import { forgotPassword, ForgotPasswordRequest } from '@/api/authService';
+import { forgotPassword } from '@/services/authService';
+import { ForgotPasswordRequest } from '@/types/auth';
 import { AUTH_ROUTES, AuthStackNavigatorParamList } from '@/types/routes';
 import { showSuccessToast } from '@/utils/toast';
 

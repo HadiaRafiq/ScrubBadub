@@ -1,3 +1,14 @@
+export interface OrderAddress {
+  label: string;
+  address: string;
+  city: string | null;
+  state: string | null;
+  zipCode: string | null;
+  country: string;
+  latitude: number;
+  longitude: number;
+}
+
 export enum OrderStatus {
   REQUESTED = 'Requested',
   ACCEPTED = 'Accepted',
@@ -5,4 +16,66 @@ export enum OrderStatus {
   IN_PROGRESS = 'In_Progress',
   COMPLETED = 'Completed',
   CANCELLED = 'Cancelled',
+}
+
+export interface OrderFilter {
+  field: string;
+  operator: string;
+  value: string | number;
+}
+
+export interface ScrubOrdersRequest {
+  filters?: OrderFilter[];
+  fields?: string;
+  logicalOperator?: 'and' | 'or';
+  pageNumber?: number;
+  pageSize?: number;
+  sortField?: string;
+  sortDirection?: 'asc' | 'desc';
+  sumFields?: string;
+}
+
+export interface OrderPrice {
+  platformFee: number;
+  taxes: number;
+  loadPrice: number;
+  delivery: number;
+  pickup: number;
+}
+
+export interface OrderBud {
+  id: string;
+  fullname: string;
+}
+
+export interface OrderScrub {
+  id: string;
+  fullname: string;
+  address?: OrderAddress;
+}
+
+export interface ScrubOrder {
+  id: string;
+  scrubEarning: number;
+  loadSize: number;
+  budLocation: string;
+  budAddress: OrderAddress;
+  orderInstructions: string | null;
+  selfPickup: boolean;
+  selfDelivery: boolean;
+  budId: string;
+  bud: OrderBud;
+  scrubId: string;
+  scrub: OrderScrub;
+  status: OrderStatus;
+  createdAt: string;
+  totalRevenue: number;
+  price: OrderPrice;
+}
+
+export interface ScrubOrdersResponse {
+  data: {
+    totalCount: number;
+    items: ScrubOrder[];
+  };
 }

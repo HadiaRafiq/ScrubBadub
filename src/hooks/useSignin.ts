@@ -1,7 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { signIn, SignInRequest, SignInResponse } from '@/api/authService';
+import { signIn } from '@/services/authService';
 import { useAuthStore } from '@/store/auth';
+import { SignInRequest, SignInResponse } from '@/types/auth';
 import { showSuccessToast } from '@/utils/toast';
 
 export const useSignin = () => {

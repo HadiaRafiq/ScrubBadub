@@ -1,5 +1,10 @@
-import React from 'react';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import React, { useMemo } from 'react';
+import {
+  ActivityIndicator,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -7,30 +12,142 @@ import { Avatar, makeStyles, Text, useTheme } from '@rneui/themed';
 
 import OrderCard from '@/components/OrderCard';
 import StatsCard from '@/components/StatsCard';
+import { useScrubOrders } from '@/hooks/useScrubOrders';
 import { useAuthStore } from '@/store/auth';
 import { OrderStatus } from '@/types/order';
+
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+};
+
+const formatPrice = (price: number): string => {
+  return `$${price.toFixed(2)}`;
+};
 
 const BudDashboard = () => {
   const styles = useStyles();
   const { theme } = useTheme();
   const { user } = useAuthStore();
 
-  const currentOrders = [
-    {
-      title: 'Order #scrub-odr-q21bx87y',
-      status: OrderStatus.REQUESTED,
-      date: 'Jul 15, 2023',
-      loadSize: '5',
-      price: '$24.99',
-    },
-    {
-      title: 'Order #scrub-odr-q21bx87y',
-      status: OrderStatus.IN_PROGRESS,
-      date: 'Jul 15, 2023',
-      loadSize: '5',
-      price: '$24.99',
-    },
-  ];
+  const {
+    data: ordersData,
+    isLoading,
+    error,
+  } = useScrubOrders({
+    pageNumber: 1,
+    pageSize: 10,
+    sortField: 'createdAt',
+    sortDirection: 'desc',
+  });
+
+  const stats = useMemo(() => {
+    if (!ordersData?.data?.items) {
+      return {
+        totalOrders: 0,
+        totalSpent: 0,
+        activeOrders: 0,
+        completedOrders: 0,
+      };
+    }
+
+    const { items, totalCount } = ordersData.data;
+    const totalOrders = totalCount || 0;
+    const totalSpent = items.reduce(
+      (sum, order) => sum + order.totalRevenue,
+      0,
+    );
+    const activeOrders = items.filter(
+      order =>
+        order.status === OrderStatus.REQUESTED ||
+        order.status === OrderStatus.ACCEPTED ||
+        order.status === OrderStatus.IN_PROGRESS,
+    ).length;
+    const completedOrders = items.filter(
+      order => order.status === OrderStatus.COMPLETED,
+    ).length;
+
+    return {
+      totalOrders,
+      totalSpent,
+      activeOrders,
+      completedOrders,
+    };
+  }, [ordersData]);
+
+  const latestOrders = useMemo(() => {
+    if (!ordersData?.data?.items) {
+      return [];
+    }
+
+    return ordersData.data.items.slice(0, 2).map(order => ({
+      id: order.id,
+      title: `Order #${order.id}`,
+      status: order.status,
+      date: formatDate(order.createdAt),
+      loadSize: order.loadSize.toString(),
+      price: formatPrice(order.totalRevenue),
+    }));
+  }, [ordersData]);
+
+  const renderOrdersContent = () => {
+    if (isLoading) {
+      return (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      );
+    }
+
+    if (error) {
+      return (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>
+            Failed to load orders. Please try again.
+          </Text>
+        </View>
+      );
+    }
+
+    if (latestOrders.length === 0) {
+      return (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No orders found</Text>
+        </View>
+      );
+    }
+
+    return latestOrders.map((order, index) => (
+      <View key={order.id} style={index > 0 ? styles.orderCardSpacing : {}}>
+        <OrderCard
+          title={order.title}
+          status={order.status}
+          date={order.date}
+          loadSize={order.loadSize}
+          price={order.price}
+          primaryLabel="View Details"
+          onPrimary={() => {
+            // Handle view details action
+          }}
+        />
+      </View>
+    ));
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
@@ -72,14 +189,14 @@ const BudDashboard = () => {
               iconColor="#10C8BB"
               bgColor="#E8F9EE"
               label="Total Order"
-              value="18"
+              value={stats.totalOrders.toString()}
             />
             <StatsCard
               icon="cash-outline"
               iconColor="#8E68F3"
               bgColor="#F3E8FF"
               label="Total Spent"
-              value="$2795.64"
+              value={formatPrice(stats.totalSpent)}
             />
           </View>
           <View style={styles.statsContainer}>
@@ -88,14 +205,14 @@ const BudDashboard = () => {
               iconColor="#F4A41D"
               bgColor="#FFF7E6"
               label="Active Order"
-              value="0"
+              value={stats.activeOrders.toString()}
             />
             <StatsCard
               icon="checkmark-done-outline"
               iconColor="#28A745"
               bgColor="#E8F9EE"
               label="Completed"
-              value="3"
+              value={stats.completedOrders.toString()}
             />
           </View>
 
@@ -109,24 +226,7 @@ const BudDashboard = () => {
               </TouchableOpacity>
             </View>
 
-            {currentOrders.map((order, index) => (
-              <View
-                key={index}
-                style={index > 0 ? styles.orderCardSpacing : {}}
-              >
-                <OrderCard
-                  title={order.title}
-                  status={order.status}
-                  date={order.date}
-                  loadSize={order.loadSize}
-                  price={order.price}
-                  primaryLabel="View Details"
-                  onPrimary={() => {
-                    // Handle view details action
-                  }}
-                />
-              </View>
-            ))}
+            {renderOrdersContent()}
           </View>
         </View>
       </ScrollView>
@@ -281,6 +381,31 @@ const useStyles = makeStyles(theme => ({
   actionText: {
     fontSize: moderateScale(14),
     fontWeight: '500',
+    color: theme.colors.grey2,
+    textAlign: 'center',
+  },
+  loadingContainer: {
+    paddingVertical: verticalScale(40),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  errorContainer: {
+    paddingVertical: verticalScale(40),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  errorText: {
+    fontSize: moderateScale(14),
+    color: '#C55050',
+    textAlign: 'center',
+  },
+  emptyContainer: {
+    paddingVertical: verticalScale(40),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyText: {
+    fontSize: moderateScale(14),
     color: theme.colors.grey2,
     textAlign: 'center',
   },
