@@ -32,13 +32,6 @@ const DuberProfile = () => {
       <View style={styles.headerBar}>
         <Text style={styles.headerTitle}>Profile Settings</Text>
         <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.iconButton}>
-            <Ionicons
-              name="refresh-outline"
-              size={moderateScale(20)}
-              color="#4B5563"
-            />
-          </TouchableOpacity>
           <TouchableOpacity style={styles.iconButton} onPress={handleLogout}>
             <Ionicons
               name="log-out-outline"
