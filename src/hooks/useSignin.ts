@@ -12,7 +12,7 @@ export const useSignin = () => {
       if (response.status && response.data) {
         console.log(response.data);
         setUser(response.data.user);
-        setToken(response.data.token);
+        setToken(response.data.authToken);
         showSuccessToast('Signin successful');
         // Navigation will automatically switch to authenticated stack via AppNavigator
       }

@@ -1,16 +1,29 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import MyDeliveries from '@/screens/duber/MyDeliveries';
 import PlaceOrder from '@/screens/duber/PlaceOrder';
 import MyOrders from '@/screens/duber/MyOrders';
 import DuberProfile from '@/screens/duber/Profile';
+import OrderDetail from '@/screens/duber/OrderDetail';
 import { BUD_ROUTES, BudStackParamList } from '@/types/routes';
 import { useAuthStore } from '@/store/auth';
 import { ROLES } from '@/types/user';
 import BudDashboard from '@/screens/dashboards/BudDashboard';
+
+const OrdersStack = createNativeStackNavigator<BudStackParamList>();
+
+const OrdersStackNavigator = () => {
+    return (
+        <OrdersStack.Navigator screenOptions={{ headerShown: false }}>
+            <OrdersStack.Screen name={BUD_ROUTES.MY_ORDERS} component={MyOrders} />
+            <OrdersStack.Screen name={BUD_ROUTES.ORDER_DETAIL} component={OrderDetail} />
+        </OrdersStack.Navigator>
+    );
+};
 
 const Tab = createBottomTabNavigator<BudStackParamList>();
 
@@ -79,7 +92,7 @@ const BudStack = () => {
           />
           <Tab.Screen
               name={BUD_ROUTES.MY_ORDERS}
-              component={MyOrders}
+              component={OrdersStackNavigator}
               options={{ tabBarLabel: 'My Orders' }}
           />
           <Tab.Screen

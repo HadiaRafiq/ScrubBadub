@@ -1,15 +1,16 @@
-import React, { useMemo, useState } from 'react';
-import { View } from 'react-native';
+import React, { useMemo, useState, useCallback } from 'react';
+import { View, TouchableOpacity, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Controller, Control, FieldErrors, useWatch } from 'react-hook-form';
+import { Controller, Control, FieldErrors, useWatch, UseFormSetValue } from 'react-hook-form';
 import { Text } from '@rneui/themed';
+import { moderateScale } from 'react-native-size-matters';
 
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import { ScrubSignUpForm } from '..';
 import { SignUpStyles } from '../types';
 import { sendEmailOtp, verifyEmailOtp } from '@/api/authService';
-import ImagePickerField from '@/components/ImagePickerField';
+import { pickImage } from '@/utils/imagePicker';
 
 type Props = {
   styles: SignUpStyles;
@@ -18,6 +19,7 @@ type Props = {
   errors: FieldErrors<ScrubSignUpForm>;
   genderValue?: 'male' | 'female' | 'other';
   onGenderSelect: (value: 'male' | 'female' | 'other') => void;
+    setValue: UseFormSetValue<ScrubSignUpForm>;
 };
 
 const StepDetails: React.FC<Props> = ({
@@ -27,6 +29,7 @@ const StepDetails: React.FC<Props> = ({
   errors,
   genderValue,
   onGenderSelect,
+    setValue,
 }) => {
     const emailValue = useWatch({ control, name: 'email' });
     const otpValue = useWatch({ control, name: 'otp' });
@@ -69,6 +72,16 @@ const StepDetails: React.FC<Props> = ({
         }
     };
 
+    const profileImageValue = useWatch({ control, name: 'profileImage' });
+
+    const handleImagePicker = useCallback(async () => {
+        const result = await pickImage();
+
+        if (result) {
+            setValue('profileImage', result.uri || '', { shouldValidate: true });
+        }
+    }, [setValue]);
+
   const renderGenderPill = (value: 'male' | 'female' | 'other', label: string) => {
     const isActive = genderValue === value;
     return (
@@ -93,13 +106,20 @@ const StepDetails: React.FC<Props> = ({
     <View style={styles.stepContent}>
       <Text style={styles.stepTitle}>Enter Details</Text>
 
-          <Controller
-              control={control}
-              name="profileImage"
-              render={({ field: { onChange, value } }) => (
-                  <ImagePickerField label="Upload Image" value={value} onChange={onChange} />
-              )}
-          />
+          <View style={styles.inputContainer}>
+              <Text style={styles.label}>Upload Image</Text>
+              <TouchableOpacity style={styles.uploadBox} activeOpacity={0.85} onPress={handleImagePicker}>
+                  {profileImageValue ? (
+                      <Image source={{ uri: profileImageValue }} style={styles.preview} />
+                  ) : (
+                      <>
+                          <Ionicons name="image-outline" size={moderateScale(22)} color="#9E9E9E" />
+                          <Text style={styles.uploadText}>Upload Image</Text>
+                          <Text style={styles.linkText}>Choose from gallery</Text>
+                      </>
+                  )}
+              </TouchableOpacity>
+          </View>
 
       <Controller
         control={control}

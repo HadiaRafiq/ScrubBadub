@@ -11,7 +11,7 @@ export interface SignInResponse {
   message?: string;
   data?: {
     user: User;
-    token: string;
+    authToken: string;
   };
 }
 
@@ -58,7 +58,10 @@ export const signIn = async (
     const response = await axiosInstance.post('/auth/login', credentials);
     return {
       status: true,
-      data: response.data,
+      data: {
+        user: response.data.user,
+        authToken: response.data.authToken,
+      },
     };
   } catch (error: any) {
     return {

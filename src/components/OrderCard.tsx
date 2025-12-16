@@ -46,35 +46,39 @@ const OrderCard: React.FC<OrderCardProps> = ({
 
   return (
     <View style={styles.card}>
-      <View style={styles.headerRow}>
-        <Text style={styles.title}>{title}</Text>
-        <View style={[styles.statusPill, { backgroundColor: colors.bg }]}>
-                  <Text style={[styles.statusText, { color: colors.text }]}>
-                      {formatStatusLabel(status)}
-                  </Text>
-        </View>
-      </View>
-      <View style={styles.metaRow}>
-        <Text style={styles.metaText}>{date}</Text>
-        <Text style={styles.price}>{price}</Text>
-      </View>
-      <Text style={styles.metaText}>Load Size: {loadSize}</Text>
+          <View style={styles.topRow}>
+              <View style={styles.leftColumn}>
+                  <Text style={styles.title}>{title}</Text>
+                  <Text style={styles.metaText}>{date}</Text>
+                  <Text style={styles.metaText}>Load Size: {loadSize}</Text>
+              </View>
+              <View style={styles.rightColumn}>
+                  <View style={[styles.statusPill, { backgroundColor: colors.bg }]}>
+                      <Text style={[styles.statusText, { color: colors.text }]}>
+                          {formatStatusLabel(status)}
+                      </Text>
+                  </View>
+                  <Text style={styles.price}>{price}</Text>
+              </View>
+          </View>
       <View style={styles.actionsRow}>
         {secondaryLabel && onSecondary && (
           <Button
-            title={secondaryLabel}
-            type="outline"
+                      title={secondaryLabel}
             onPress={onSecondary}
             buttonStyle={styles.secondaryBtn}
             titleStyle={styles.secondaryTitle}
           />
         )}
-        <Button
-          title={primaryLabel}
-          onPress={onPrimary}
-          buttonStyle={styles.primaryBtn}
-          titleStyle={styles.primaryTitle}
-        />
+              {primaryLabel && onPrimary && (
+                  <Button
+                      title={primaryLabel}
+                      onPress={onPrimary}
+                      type="outline"
+                      buttonStyle={styles.primaryBtn}
+                      titleStyle={styles.primaryTitle}
+                  />
+              )}
       </View>
     </View>
   );
@@ -94,10 +98,19 @@ const useStyles = makeStyles(theme => ({
     borderWidth: 1,
     borderColor: '#F2F2F2',
   },
-  headerRow: {
+    topRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+        alignItems: 'flex-start',
+        marginBottom: verticalScale(12),
+    },
+    leftColumn: {
+        flex: 1,
+        gap: verticalScale(4),
+    },
+    rightColumn: {
+        alignItems: 'flex-end',
+        gap: verticalScale(8),
   },
   title: {
     fontSize: moderateScale(14),
@@ -107,17 +120,12 @@ const useStyles = makeStyles(theme => ({
   statusPill: {
     paddingHorizontal: moderateScale(10),
     paddingVertical: verticalScale(4),
-    borderRadius: 12,
+      borderRadius: moderateScale(6),
   },
   statusText: {
     fontSize: moderateScale(12),
     fontWeight: '600',
-  },
-  metaRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
+    },
   metaText: {
     fontSize: moderateScale(12),
     color: '#6B7280',
@@ -129,31 +137,33 @@ const useStyles = makeStyles(theme => ({
   },
   actionsRow: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+      justifyContent: 'flex-start',
     gap: moderateScale(10),
     marginTop: verticalScale(4),
   },
   primaryBtn: {
-    backgroundColor: theme.colors.primary,
+      borderColor: '#E5E7EB',
+      borderWidth: 1,
     paddingHorizontal: moderateScale(14),
     paddingVertical: verticalScale(8),
-    borderRadius: 10,
+      borderRadius: moderateScale(8),
+      backgroundColor: 'transparent',
   },
   primaryTitle: {
     fontSize: moderateScale(13),
     fontWeight: '600',
+      color: '#111827',
   },
-  secondaryBtn: {
-    borderColor: '#E5E7EB',
+    secondaryBtn: {
     paddingHorizontal: moderateScale(14),
     paddingVertical: verticalScale(8),
-    borderRadius: 10,
-    backgroundColor: '#F9FAFB',
+      borderRadius: moderateScale(8),
+      backgroundColor: '#10C8BB',
   },
   secondaryTitle: {
     fontSize: moderateScale(13),
     fontWeight: '600',
-    color: '#111827',
+      color: '#FFFFFF',
   },
 }));
 

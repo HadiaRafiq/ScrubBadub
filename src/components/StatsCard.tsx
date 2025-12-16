@@ -21,9 +21,9 @@ const StatsCard: React.FC<StatsCardProps> = ({
 }) => {
   const styles = useStyles();
   return (
-    <View style={[styles.card, { backgroundColor: '#FFFFFF' }]}>
+      <View style={styles.card}>
       <View style={[styles.iconWrap, { backgroundColor: bgColor }]}>
-        <Ionicons name={icon} size={moderateScale(20)} color={iconColor} />
+              <Ionicons name={icon} size={moderateScale(24)} color={iconColor} />
       </View>
       <Text style={styles.label}>{label}</Text>
       <Text style={styles.value}>{value}</Text>
@@ -34,30 +34,34 @@ const StatsCard: React.FC<StatsCardProps> = ({
 const useStyles = makeStyles(() => ({
   card: {
     flex: 1,
-    borderRadius: moderateScale(12),
-    padding: moderateScale(14),
-    gap: verticalScale(6),
+        backgroundColor: '#FFFFFF',
+        borderRadius: moderateScale(16),
+        padding: moderateScale(16),
+        gap: verticalScale(12),
     shadowColor: '#000',
-    shadowOpacity: 0.04,
+        shadowOpacity: 0.08,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+        elevation: 3,
   },
   iconWrap: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
+      width: moderateScale(48),
+      height: moderateScale(48),
+      borderRadius: moderateScale(12),
     alignItems: 'center',
     justifyContent: 'center',
   },
   label: {
-    fontSize: moderateScale(12),
+      fontSize: moderateScale(14),
+      fontWeight: '400',
     color: '#6B7280',
+      marginTop: verticalScale(4),
   },
   value: {
-    fontSize: moderateScale(16),
+      fontSize: moderateScale(24),
     fontWeight: '700',
     color: '#111827',
+      marginTop: verticalScale(4),
   },
 }));
 

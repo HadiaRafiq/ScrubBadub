@@ -48,6 +48,7 @@ export enum BUD_ROUTES {
   MY_DELIVERIES = 'BudMyDeliveries',
   PLACE_ORDER = 'BudPlaceOrder',
   MY_ORDERS = 'BudMyOrders',
+  ORDER_DETAIL = 'BudOrderDetail',
   PROFILE = 'BudProfile',
 }
 
@@ -86,6 +87,7 @@ export type BudStackParamList = {
   [BUD_ROUTES.MY_DELIVERIES]: undefined;
   [BUD_ROUTES.PLACE_ORDER]: undefined;
   [BUD_ROUTES.MY_ORDERS]: undefined;
+  [BUD_ROUTES.ORDER_DETAIL]: { orderId: string };
   [BUD_ROUTES.PROFILE]: undefined;
 };
 

@@ -148,6 +148,7 @@ const SignUp = () => {
               errors={errors}
               genderValue={genderValue}
               onGenderSelect={value => setValue('gender', value)}
+              setValue={setValue}
             />
           );
         case 2:
@@ -202,6 +203,7 @@ const SignUp = () => {
             errors={errors}
             genderValue={genderValue}
             onGenderSelect={value => setValue('gender', value)}
+            setValue={setValue}
           />
         );
       case 2:
@@ -383,12 +385,23 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FAFAFA',
+    gap: verticalScale(6),
   },
   uploadText: {
-    marginTop: verticalScale(6),
     color: '#8A8A8A',
     fontSize: moderateScale(14),
     fontWeight: '500',
+  },
+  linkText: {
+    color: '#10C8BB',
+    fontSize: moderateScale(12),
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+  },
+  preview: {
+    width: moderateScale(120),
+    height: moderateScale(120),
+    borderRadius: moderateScale(10),
   },
   flagContainer: {
     flexDirection: 'row',
