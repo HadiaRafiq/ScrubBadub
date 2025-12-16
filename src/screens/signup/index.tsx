@@ -256,7 +256,7 @@ const SignUp = () => {
               title="Back"
               onPress={previousStep}
               type="outline"
-              containerStyle={styles.previousButton}
+                          containerStyle={styles.buttonContainer}
             />
           )}
           {isLastStep ? (
@@ -264,9 +264,14 @@ const SignUp = () => {
               title="Submit & Create Account"
               onPress={handleSubmit(onSubmit)}
               loading={isSubmitting}
+                          containerStyle={styles.buttonContainer}
             />
           ) : (
-            <Button title="Continue" onPress={nextStep} />
+                          <Button
+                              title="Continue"
+                              onPress={nextStep}
+                              containerStyle={styles.buttonContainer}
+                          />
           )}
         </View>
       </KeyboardAvoidingView>
@@ -416,13 +421,12 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     gap: moderateScale(12),
     paddingHorizontal: moderateScale(20),
-    paddingVertical: verticalScale(16),
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+      paddingVertical: verticalScale(16),
     backgroundColor: theme.colors.background,
   },
-  previousButton: {
+    buttonContainer: {
     flex: 1,
+    width:'50%'
   },
   reviewCard: {
     borderWidth: 1,

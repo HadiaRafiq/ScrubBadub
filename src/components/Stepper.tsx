@@ -22,12 +22,15 @@ const Stepper: React.FC<StepperProps> = ({
 }) => {
   const styles = useStyles();
   const { theme } = useTheme();
-    const textColor = (theme.colors as any).text || '#252525';
 
-  const activeStepColor = activeColor || theme.colors.secondary || '#4DD0E1';
+  // Teal color for active/completed steps (matching the image)
+  const activeStepColor = activeColor || '#38DDCF';
+  // Light gray for inactive steps
   const inactiveStepBg = inactiveColor || '#E0E0E0';
+  // Dark gray text for inactive steps
   const inactiveStepText = '#757575';
-  const connectorColor = '#E0E0E0';
+  const activeConnectorColor = activeStepColor;
+  const inactiveConnectorColor = '#E0E0E0';
 
   return (
     <View style={styles.container}>
@@ -35,60 +38,66 @@ const Stepper: React.FC<StepperProps> = ({
         const isActive = index === currentStep;
         const isCompleted = index < currentStep;
         const isLast = index === steps.length - 1;
+        const isStepActive = isActive || isCompleted;
+
+        // Connector line after this step is active if this step is completed
+        // The connector between steps is teal if the step before it is completed
+        const isConnectorActive = index < currentStep;
+
+        // White text on teal circles, dark gray text on gray circles
+        const stepNumberColor = isStepActive ? '#FFFFFF' : inactiveStepText;
+        const labelColor = isStepActive ? theme.colors.grey2 : inactiveStepText;
+        const labelWeight = isStepActive ? '600' : '400';
 
         return (
           <React.Fragment key={index}>
-            <View style={styles.stepContainer}>
-              {/* Step Circle */}
-              <View
-                style={[
-                  styles.stepCircle,
-                  {
-                    backgroundColor: isActive
-                      ? activeStepColor
-                      : isCompleted
-                        ? activeStepColor
-                        : inactiveStepBg,
-                  },
-                ]}>
-                <Text
+            <View style={styles.stepWrapper}>
+              <View style={styles.stepContainer}>
+                {/* Step Circle */}
+                <View
                   style={[
-                    styles.stepNumber,
+                    styles.stepCircle,
                     {
-                      color: isActive || isCompleted ? '#FFFFFF' : inactiveStepText,
+                      backgroundColor: isStepActive ? activeStepColor : inactiveStepBg,
                     },
                   ]}>
-                  {index + 1}
-                </Text>
+                  <Text
+                    style={[
+                      styles.stepNumber,
+                      { color: stepNumberColor },
+                    ]}>
+                    {index + 1}
+                  </Text>
+                </View>
+
+                {/* Step Label - Optional */}
+                {step.label && (
+                  <Text
+                    style={[
+                      styles.stepLabel,
+                      {
+                        color: labelColor,
+                        fontWeight: labelWeight,
+                      },
+                    ]}
+                    numberOfLines={2}>
+                    {step.label}
+                  </Text>
+                )}
               </View>
 
-              {/* Step Label */}
-              {step.label && (
-                <Text
+              {/* Connector Line - Attached to center of circle */}
+              {!isLast && (
+                <View
                   style={[
-                    styles.stepLabel,
+                    styles.connector,
                     {
-                        color: isActive ? textColor : inactiveStepText,
-                      fontWeight: isActive ? '600' : '400',
+                      backgroundColor: isConnectorActive ? activeConnectorColor : inactiveConnectorColor,
                     },
                   ]}
-                  numberOfLines={2}>
-                  {step.label}
-                </Text>
+                />
               )}
             </View>
-
-            {/* Connector Line */}
-            {!isLast && (
-              <View
-                style={[
-                  styles.connector,
-                  {
-                    backgroundColor: connectorColor,
-                  },
-                ]}
-              />
-            )}
           </React.Fragment>
         );
       })}
@@ -99,17 +108,24 @@ const Stepper: React.FC<StepperProps> = ({
 const useStyles = makeStyles(() => ({
   container: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    paddingHorizontal: moderateScale(16),
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: moderateScale(20),
     paddingVertical: verticalScale(16),
     width: '100%',
+    backgroundColor: '#FFFFFF',
+  },
+  stepWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    position: 'relative',
   },
   stepContainer: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-start',
-    minWidth: moderateScale(60),
+    zIndex: 2,
   },
   stepCircle: {
     width: moderateScale(36),
@@ -117,26 +133,24 @@ const useStyles = makeStyles(() => ({
     borderRadius: moderateScale(18),
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: verticalScale(8),
   },
   stepNumber: {
     fontSize: moderateScale(16),
     fontWeight: '700',
-    fontFamily: 'Montserrat_700Bold',
   },
   stepLabel: {
     fontSize: moderateScale(12),
     textAlign: 'center',
-    lineHeight: moderateScale(16),
     paddingHorizontal: moderateScale(4),
-    minHeight: verticalScale(32),
+    marginTop: verticalScale(4),
   },
   connector: {
-    flex: 1,
-    height: 2,
-    marginTop: verticalScale(17),
-    marginHorizontal: moderateScale(4),
-    maxWidth: moderateScale(40),
+    position: 'absolute',
+    left: moderateScale(30), // Start from center of current circle
+    right: moderateScale(-30), // Extend 18px beyond right edge to reach next circle center
+    top: moderateScale(16), // Center vertically: (36/2) - (4/2) = 18 - 2 = 16
+    height: 4,
+    zIndex: 1,
   },
 }));
 

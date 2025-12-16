@@ -30,7 +30,6 @@ export interface SignUpRequest {
   laundryFacilityDetails?: any;
   equipments?: any;
   isSmokeFree?: boolean;
-  // Add other signup fields as needed
 }
 
 export interface SignUpResponse {
@@ -42,11 +41,21 @@ export interface SignUpResponse {
   };
 }
 
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ForgotPasswordResponse {
+  status: boolean;
+  message?: string;
+  data?: any;
+}
+
 export const signIn = async (
   credentials: SignInRequest,
 ): Promise<SignInResponse> => {
   try {
-    const response = await axiosInstance.post('/auth/signin', credentials);
+    const response = await axiosInstance.post('/auth/login', credentials);
     return {
       status: true,
       data: response.data,
@@ -92,6 +101,19 @@ export const verifyEmailOtp = async (email: string, otp: string) => {
   }
 };
 
-export const forgotPassword = async (email: string) => {
-  await axiosInstance.post('/auth/forgot-password', { email });
+export const forgotPassword = async (
+  data: ForgotPasswordRequest,
+): Promise<ForgotPasswordResponse> => {
+  try {
+    const response = await axiosInstance.post('/auth/forgot-password', data);
+    return {
+      status: true,
+      data: response.data,
+    };
+  } catch (error: any) {
+    return {
+      status: false,
+      message: error.message || 'Failed to send password reset email',
+    };
+  }
 };  

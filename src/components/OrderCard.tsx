@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { makeStyles, Text, Button } from '@rneui/themed';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 
-export type OrderStatus = 'Requested' | 'In Progress' | 'Completed' | 'Pending' | 'Cancelled';
+import { OrderStatus } from '@/types/order';
 
 export type OrderCardProps = {
   title: string;
@@ -18,11 +18,16 @@ export type OrderCardProps = {
 };
 
 const statusColors: Record<OrderStatus, { bg: string; text: string }> = {
-  Requested: { bg: '#FCEEC3', text: '#AD7A05' },
-  'In Progress': { bg: '#E2E8F8', text: '#3150AA' },
-  Completed: { bg: '#DBF6DF', text: '#3A9150' },
-  Pending: { bg: '#FCEBCF', text: '#B88205' },
-  Cancelled: { bg: '#FAD7D7', text: '#C55050' },
+    [OrderStatus.REQUESTED]: { bg: '#FCEEC3', text: '#AD7A05' },
+    [OrderStatus.ACCEPTED]: { bg: '#E2E8F8', text: '#3150AA' },
+    [OrderStatus.REJECTED]: { bg: '#FAD7D7', text: '#C55050' },
+    [OrderStatus.IN_PROGRESS]: { bg: '#E2E8F8', text: '#3150AA' },
+    [OrderStatus.COMPLETED]: { bg: '#DBF6DF', text: '#3A9150' },
+    [OrderStatus.CANCELLED]: { bg: '#FAD7D7', text: '#C55050' },
+};
+
+const formatStatusLabel = (status: OrderStatus): string => {
+    return status.replace('_', ' ');
 };
 
 const OrderCard: React.FC<OrderCardProps> = ({
@@ -37,14 +42,16 @@ const OrderCard: React.FC<OrderCardProps> = ({
   secondaryLabel,
 }) => {
   const styles = useStyles();
-  const colors = statusColors[status] || statusColors.Requested;
+    const colors = statusColors[status] || statusColors[OrderStatus.REQUESTED];
 
   return (
     <View style={styles.card}>
       <View style={styles.headerRow}>
         <Text style={styles.title}>{title}</Text>
         <View style={[styles.statusPill, { backgroundColor: colors.bg }]}>
-          <Text style={[styles.statusText, { color: colors.text }]}>{status}</Text>
+                  <Text style={[styles.statusText, { color: colors.text }]}>
+                      {formatStatusLabel(status)}
+                  </Text>
         </View>
       </View>
       <View style={styles.metaRow}>

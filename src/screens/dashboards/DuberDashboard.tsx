@@ -8,6 +8,7 @@ import Header from '@/components/Header';
 import { useAuthStore } from '@/store/auth';
 import StatsCard from '@/components/StatsCard';
 import OrderCard from '@/components/OrderCard';
+import { OrderStatus } from '@/types/order';
 
 const DuberDashboard = () => {
   const styles = useStyles();
@@ -41,7 +42,7 @@ const DuberDashboard = () => {
                   </View>
                   <OrderCard
                       title="Order #scrub-odr-q21bx87y"
-                      status="Requested"
+                      status={OrderStatus.REQUESTED}
                       date="Jul 15, 2023"
                       loadSize="5"
                       price="$24.99"
@@ -50,7 +51,7 @@ const DuberDashboard = () => {
                   <View style={{ height: verticalScale(12) }} />
                   <OrderCard
                       title="Order #scrub-odr-q21bx87y"
-                      status="In Progress"
+                      status={OrderStatus.IN_PROGRESS}
                       date="Jul 15, 2023"
                       loadSize="5"
                       price="$24.99"
@@ -63,7 +64,7 @@ const DuberDashboard = () => {
                   </View>
                   <OrderCard
                       title="Order #scrub-odr-q21bx87y"
-                      status="Completed"
+                      status={OrderStatus.COMPLETED}
                       date="Jul 15, 2023"
                       loadSize="5"
                       price="$24.99"
@@ -73,7 +74,7 @@ const DuberDashboard = () => {
                   <View style={{ height: verticalScale(12) }} />
                   <OrderCard
                       title="Order #scrub-odr-q21bx88z"
-                      status="Pending"
+                      status={OrderStatus.ACCEPTED}
                       date="Jul 18, 2023"
                       loadSize="2"
                       price="$34.99"
@@ -83,7 +84,7 @@ const DuberDashboard = () => {
                   <View style={{ height: verticalScale(12) }} />
                   <OrderCard
                       title="Order #scrub-odr-q21bx89a"
-                      status="Cancelled"
+                      status={OrderStatus.CANCELLED}
                       date="Jul 20, 2023"
                       loadSize="19"
                       price="$19.99"

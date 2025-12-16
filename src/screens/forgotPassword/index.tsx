@@ -1,6 +1,6 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useTranslation } from '@/utils/i18n';
+
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
@@ -15,22 +15,23 @@ import Button from '@/components/Button';
 import Header from '@/components/Header';
 import Input from '@/components/Input';
 import { signInSchema } from '@/schemas/validationSchema';
-import { AUTH_ROUTES, AuthStackNavigatorParamList } from '@/types/routes';
+import { AuthStackNavigatorParamList } from '@/types/routes';
+import { useForgotPassword } from '@/hooks/useForgotPassword';
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 const forgotPasswordSchema = signInSchema.pick({ email: true });
 
 const ForgotPassword = () => {
-  const { t } = useTranslation();
   const styles = useStyles();
   const navigation =
     useNavigation<NavigationProp<AuthStackNavigatorParamList>>();
+  const forgotPasswordMutation = useForgotPassword();
 
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
@@ -39,8 +40,9 @@ const ForgotPassword = () => {
   });
 
   const onSubmit = (data: ForgotPasswordFormData) => {
-    // TODO: Implement forgot password API call
-    navigation.navigate(AUTH_ROUTES.OTP_VERIFICATION, { email: data.email });
+    forgotPasswordMutation.mutate({
+      email: data.email,
+    });
   };
 
   const handleNavigateBack = () => {
@@ -59,9 +61,9 @@ const ForgotPassword = () => {
           showsVerticalScrollIndicator={false}>
           <View style={styles.content}>
             <View style={styles.titleContainer}>
-              <Text style={styles.title}>{t('auth.forgotPassword.title')}</Text>
+              <Text style={styles.title}>Forgot Password</Text>
               <Text style={styles.subtitle}>
-                {t('auth.forgotPassword.subtitle')}
+                Enter your email address and we'll send you a link to reset your password.
               </Text>
             </View>
 
@@ -71,8 +73,8 @@ const ForgotPassword = () => {
                 name="email"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <Input
-                    label={t('auth.forgotPassword.emailLabel')}
-                    placeholder={t('auth.forgotPassword.emailPlaceholder')}
+                    label="Email"
+                    placeholder="Enter your email"
                     leftIcon={
                       <Ionicons
                         name="mail-outline"
@@ -83,7 +85,7 @@ const ForgotPassword = () => {
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    errorMessage={errors.email ? t(errors.email.message!) : ''}
+                    errorMessage={errors.email ? errors.email.message : ''}
                     keyboardType="email-address"
                     autoCapitalize="none"
                     autoCorrect={false}
@@ -92,10 +94,10 @@ const ForgotPassword = () => {
               />
 
               <Button
-                title={t('auth.forgotPassword.continueButton')}
+                title="Continue"
                 onPress={handleSubmit(onSubmit)}
-                loading={isSubmitting}
-                disabled={isSubmitting}
+                loading={forgotPasswordMutation.isPending}
+                disabled={forgotPasswordMutation.isPending}
                 containerStyle={styles.buttonContainer}
               />
             </View>

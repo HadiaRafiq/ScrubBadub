@@ -36,10 +36,4 @@ export const signUpSchema = z
     path: ['confirmPassword'],
   });
 
-export const forgotPasswordSchema = signInSchema.pick({ email: true });
-
-export const resetPasswordSchema = signUpSchema.pick({
-  password: true,
-  confirmPassword: true,
-});
 

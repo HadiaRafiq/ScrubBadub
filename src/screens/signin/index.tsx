@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useTranslation } from '@/utils/i18n';
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
@@ -15,26 +14,24 @@ import Header from '@/components/Header';
 import Button from '@/components/Button';
 import Checkbox from '@/components/Checkbox';
 import Input from '@/components/Input';
-import { signIn as signInAPI } from '@/api/authService';
 import { signInSchema } from '@/schemas/validationSchema';
 import { AUTH_ROUTES, AuthStackNavigatorParamList } from '@/types/routes';
-import { useAuthStore } from '@/store/auth';
+import { useSignin } from '@/hooks/useSignin';
 
 type SignInFormData = z.infer<typeof signInSchema>;
 
 const SignIn = () => {
-  const { t } = useTranslation();
   const styles = useStyles();
   const { theme } = useTheme();
   const [keepSignedIn, setKeepSignedIn] = useState(true);
   const navigation =
     useNavigation<NavigationProp<AuthStackNavigatorParamList>>();
-  const { setUser, setToken } = useAuthStore();
+  const signinMutation = useSignin();
 
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -43,25 +40,11 @@ const SignIn = () => {
     },
   });
 
-  const onSubmit = async (data: SignInFormData) => {
-    try {
-      const response = await signInAPI({
-        email: data.email,
-        password: data.password,
-      });
-
-      if (response.status && response.data) {
-        setUser(response.data.user);
-        setToken(response.data.token);
-        // Navigation will automatically switch to APP stack (dashboard) via NavigationContainer
-      } else {
-        // TODO: Show error message to user
-        console.error('Sign in failed:', response.message);
-      }
-    } catch (error) {
-      // TODO: Show error message to user
-      console.error('Sign in error:', error);
-    }
+  const onSubmit = (data: SignInFormData) => {
+    signinMutation.mutate({
+      email: data.email,
+      password: data.password,
+    });
   };
 
   const handleNavigateToSignUp = () => {
@@ -84,8 +67,8 @@ const SignIn = () => {
           showsVerticalScrollIndicator={false}>
           <View style={styles.content}>
             <View style={styles.titleContainer}>
-              <Text style={styles.title}>{t('auth.signIn.title')}</Text>
-              <Text style={styles.subtitle}>{t('auth.signIn.subtitle')}</Text>
+              <Text style={styles.title}>Sign In</Text>
+              <Text style={styles.subtitle}>Welcome back! Please sign in to your account.</Text>
             </View>
 
             <View style={styles.form}>
@@ -94,8 +77,8 @@ const SignIn = () => {
                 name="email"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <Input
-                    label={t('auth.signIn.emailLabel')}
-                    placeholder={t('auth.signIn.emailPlaceholder')}
+                    label="Email"
+                    placeholder="Enter your email"
                     leftIcon={
                       <Ionicons
                         name="mail-outline"
@@ -106,7 +89,7 @@ const SignIn = () => {
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    errorMessage={errors.email ? t(errors.email.message!) : ''}
+                    errorMessage={errors.email ? errors.email.message : ''}
                     keyboardType="email-address"
                     autoCapitalize="none"
                     autoCorrect={false}
@@ -119,20 +102,20 @@ const SignIn = () => {
                 name="password"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <Input
-                    label={t('auth.signIn.passwordLabel')}
-                    placeholder={t('auth.signIn.passwordPlaceholder')}
+                    label="Password"
+                    placeholder="Enter your password"
                     leftIcon={
                       <Ionicons
                         name="lock-closed-outline"
                         size={moderateScale(20)}
-                        // color={styles.iconColor.color}
+                        color={styles.iconColor.color}
                       />
                     }
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
                     errorMessage={
-                      errors.password ? t(errors.password.message!) : ''
+                      errors.password ? errors.password.message : ''
                     }
                     secureTextEntry
                     autoCapitalize="none"
@@ -152,20 +135,20 @@ const SignIn = () => {
                     uncheckedColor={theme.colors.grey4}
                   />
                   <Text style={styles.keepSignedInText}>
-                    {t('auth.signIn.keepSignedIn')}
+                    Keep me signed in
                   </Text>
                 </View>
 
                 <Text style={styles.forgotPassword} onPress={handleForgotPassword}>
-                  {t('auth.signIn.forgotPassword')}
+                  Forgot Password?
                 </Text>
               </View>
 
               <Button
-                title={t('auth.signIn.signInButton')}
+                title="Sign In"
                 onPress={handleSubmit(onSubmit)}
-                loading={isSubmitting}
-                disabled={isSubmitting}
+                loading={signinMutation.isPending}
+                disabled={signinMutation.isPending}
                 containerStyle={styles.buttonContainer}
               />
 
@@ -175,9 +158,9 @@ const SignIn = () => {
           </View>
         </ScrollView>
         <View style={styles.footer}>
-          <Text style={styles.footerText}>{t('auth.signIn.noAccount')} </Text>
+          <Text style={styles.footerText}>Don't have an account? </Text>
           <Text style={styles.link} onPress={handleNavigateToSignUp}>
-            {t('auth.signIn.signUpLink')}
+            Sign Up
           </Text>
         </View>
       </KeyboardAvoidingView>
@@ -223,7 +206,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: verticalScale(8),
   },
   iconColor: {
-    color: (theme.colors as any).inputIcon || theme.colors.grey1 || '#5A5A5A',
+    color: theme.colors.grey1
   },
   inlineActions: {
     flexDirection: 'row',

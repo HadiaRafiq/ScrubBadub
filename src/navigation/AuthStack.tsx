@@ -5,8 +5,6 @@ import Welcome from '@/screens/welcome';
 import SignUp from '@/screens/signup';
 import SignIn from '@/screens/signin';
 import ForgotPassword from '@/screens/forgotPassword';
-import OtpVerification from '@/screens/otpVerification';
-import ResetPassword from '@/screens/resetPassword';
 import {
   AuthStackNavigatorParamList,
   AUTH_ROUTES,
@@ -27,15 +25,7 @@ const AuthStack = () => {
       <Stack.Screen
         name={AUTH_ROUTES.FORGOT_PASSWORD}
         component={ForgotPassword}
-      />
-      <Stack.Screen
-        name={AUTH_ROUTES.OTP_VERIFICATION}
-        component={OtpVerification}
-      />
-      <Stack.Screen
-        name={AUTH_ROUTES.RESET_PASSWORD}
-        component={ResetPassword}
-      />
+          />
     </Stack.Navigator>
   );
 };

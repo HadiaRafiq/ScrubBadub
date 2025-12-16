@@ -62,10 +62,13 @@ const StepRole: React.FC<Props> = ({ styles, theme, roleValue, onSelectRole }) =
               <View style={styles.roleCardIcon}>
                 <Ionicons name={card.icon} size={24} color={card.iconColor} />
               </View>
+                  <View style={styles.roleCardTextContainer}> 
+
               <Text style={[styles.roleCardTitle, { color: card.textColor }]}>
                 {card.title}
               </Text>
               <Text style={styles.roleCardDescription}>{card.description}</Text>
+                  </View>
             </TouchableOpacity>
           );
         })}

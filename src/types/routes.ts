@@ -19,8 +19,6 @@ export enum AUTH_ROUTES {
   SIGNUP = 'SignUp',
   SIGNIN = 'SignIn',
   FORGOT_PASSWORD = 'ForgotPassword',
-  OTP_VERIFICATION = 'OtpVerification',
-  RESET_PASSWORD = 'ResetPassword',
 }
 
 // App routes (role-based)
@@ -64,8 +62,6 @@ export type AuthStackNavigatorParamList = {
   [AUTH_ROUTES.SIGNUP]: undefined;
   [AUTH_ROUTES.SIGNIN]: undefined;
   [AUTH_ROUTES.FORGOT_PASSWORD]: undefined;
-  [AUTH_ROUTES.OTP_VERIFICATION]: { email: string };
-  [AUTH_ROUTES.RESET_PASSWORD]: { email: string };
 };
 
 // Scrub Stack Param List
