@@ -1,16 +1,35 @@
-import React, { useMemo, useState, useCallback } from 'react';
-import { View, TouchableOpacity, Image } from 'react-native';
+import React, { useMemo, useCallback, useEffect, useState } from 'react';
+import { View, TouchableOpacity, Image, Platform } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Controller, Control, FieldErrors, useWatch, UseFormSetValue } from 'react-hook-form';
 import { Text } from '@rneui/themed';
 import { moderateScale } from 'react-native-size-matters';
+import { z } from 'zod';
 
 import Button from '@/components/Button';
 import Input from '@/components/Input';
+import DatePicker from '@/components/DatePicker';
 import { ScrubSignUpForm } from '..';
 import { SignUpStyles } from '../types';
-import { sendEmailOtp, verifyEmailOtp } from '@/api/authService';
 import { pickImage } from '@/utils/imagePicker';
+import { useSendEmailOtp } from '@/hooks/useSendEmailOtp';
+import { useVerifyEmailOtp } from '@/hooks/useVerifyEmailOtp';
+
+// Zod schema for StepDetails validation
+const stepDetailsSchema = z.object({
+    email: z.string().email('Enter a valid email address'),
+    fullName: z.string().min(1, 'Full name is required'),
+    otp: z.string().optional(),
+    gender: z.enum(['male', 'female', 'other']).optional(),
+    phone: z.string().min(6, 'Phone number must be at least 6 characters'),
+    dob: z.string().optional(),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmPassword: z.string().min(1, 'Please confirm your password'),
+    profileImage: z.string().optional(),
+}).refine(data => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+});
 
 type Props = {
   styles: SignUpStyles;
@@ -20,6 +39,7 @@ type Props = {
   genderValue?: 'male' | 'female' | 'other';
   onGenderSelect: (value: 'male' | 'female' | 'other') => void;
     setValue: UseFormSetValue<ScrubSignUpForm>;
+    onOtpVerifiedChange?: (verified: boolean) => void;
 };
 
 const StepDetails: React.FC<Props> = ({
@@ -30,49 +50,51 @@ const StepDetails: React.FC<Props> = ({
   genderValue,
   onGenderSelect,
     setValue,
+    onOtpVerifiedChange,
 }) => {
     const emailValue = useWatch({ control, name: 'email' });
     const otpValue = useWatch({ control, name: 'otp' });
-    const [otpSent, setOtpSent] = useState(false);
-    const [otpVerified, setOtpVerified] = useState(false);
-    const [isSending, setIsSending] = useState(false);
-    const [isVerifying, setIsVerifying] = useState(false);
-  const [sendError, setSendError] = useState<string | undefined>(undefined);
-  const [verifyError, setVerifyError] = useState<string | undefined>(undefined);
 
-    const emailValid = useMemo(
-        () => !!emailValue && /\S+@\S+\.\S+/.test(emailValue),
-        [emailValue],
-    );
+    // Custom hooks for OTP operations
+    const sendOtpMutation = useSendEmailOtp();
+    const verifyOtpMutation = useVerifyEmailOtp();
 
-    const handleSendOtp = async () => {
-        if (!emailValid || isSending) return;
-        setIsSending(true);
-        const result = await sendEmailOtp(emailValue);
-        setIsSending(false);
-        if (result.status) {
-            setOtpSent(true);
-      setSendError(undefined);
-      setVerifyError(undefined);
-        } else {
-      setSendError(result.message || 'Unable to send OTP');
-        }
+    const { otpSent, error: sendError, reset: resetSendOtp } = sendOtpMutation;
+    const { otpVerified, error: verifyError, reset: resetVerifyOtp } = verifyOtpMutation;
+
+    // Use zod schema for email validation
+    const emailValid = useMemo(() => {
+        if (!emailValue) return false;
+        const result = stepDetailsSchema.shape.email.safeParse(emailValue);
+        return result.success;
+    }, [emailValue]);
+
+    // Reset OTP state when email changes
+    useEffect(() => {
+        resetSendOtp();
+        resetVerifyOtp();
+        onOtpVerifiedChange?.(false);
+    }, [emailValue, onOtpVerifiedChange, resetSendOtp, resetVerifyOtp]);
+
+    // Update parent component when OTP verification status changes
+    useEffect(() => {
+        onOtpVerifiedChange?.(otpVerified);
+    }, [otpVerified, onOtpVerifiedChange]);
+
+    const handleSendOtp = () => {
+
+        if (!emailValid || sendOtpMutation.isPending) return;
+        sendOtpMutation.mutate(emailValue);
     };
 
-    const handleVerifyOtp = async () => {
-        if (!otpValue || isVerifying) return;
-        setIsVerifying(true);
-        const result = await verifyEmailOtp(emailValue, otpValue);
-        setIsVerifying(false);
-        if (result.status) {
-            setOtpVerified(true);
-      setVerifyError(undefined);
-        } else {
-      setVerifyError(result.message || 'Invalid OTP');
-        }
+    const handleVerifyOtp = () => {
+        if (!otpValue || verifyOtpMutation.isPending) return;
+        verifyOtpMutation.mutate({ email: emailValue, otp: otpValue });
     };
 
     const profileImageValue = useWatch({ control, name: 'profileImage' });
+    const dobValue = useWatch({ control, name: 'dob' });
+    const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
 
     const handleImagePicker = useCallback(async () => {
         const result = await pickImage();
@@ -82,38 +104,103 @@ const StepDetails: React.FC<Props> = ({
         }
     }, [setValue]);
 
-  const renderGenderPill = (value: 'male' | 'female' | 'other', label: string) => {
-    const isActive = genderValue === value;
-    return (
-      <Button
-        title={label}
-        type={isActive ? 'solid' : 'outline'}
-        onPress={() => onGenderSelect(value)}
-        containerStyle={styles.genderPillContainer}
-        buttonStyle={[
-          styles.genderPill,
-          isActive && { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
-        ]}
-        titleStyle={[
-          styles.genderPillText,
-          isActive && { color: theme.colors.background },
-        ]}
-      />
+    // Format date to mm/dd/yyyy
+    const formatDate = useCallback((date: Date): string => {
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${month}/${day}/${year}`;
+    }, []);
+
+    // Parse date from mm/dd/yyyy string
+    const parseDate = useCallback((dateString: string): Date | null => {
+        if (!dateString) return null;
+        const parts = dateString.split('/');
+        if (parts.length !== 3) return null;
+        const month = parseInt(parts[0], 10) - 1;
+        const day = parseInt(parts[1], 10);
+        const year = parseInt(parts[2], 10);
+        const date = new Date(year, month, day);
+        if (isNaN(date.getTime())) return null;
+        return date;
+    }, []);
+
+    // Get initial date value or default to current date
+    const getInitialDate = useCallback((): Date => {
+        if (dobValue) {
+            const parsed = parseDate(dobValue);
+            if (parsed) return parsed;
+        }
+        // Default to date 18 years ago (minimum age requirement)
+        const date = new Date();
+        date.setFullYear(date.getFullYear() - 18);
+        return date;
+    }, [dobValue, parseDate]);
+
+    const handleDatePickerConfirm = useCallback(
+        (date: Date) => {
+            const formattedDate = formatDate(date);
+            setValue('dob', formattedDate, { shouldValidate: true });
+            setIsDatePickerVisible(false);
+        },
+        [setValue, formatDate],
     );
-  };
+
+    const handleDatePickerCancel = useCallback(() => {
+        setIsDatePickerVisible(false);
+    }, []);
+
+    const handleDateFieldPress = useCallback(() => {
+        setIsDatePickerVisible(true);
+    }, []);
+
+    // Render gender selection pills
+    const renderGenderPill = useCallback(
+        (value: 'male' | 'female' | 'other', label: string) => {
+            const isActive = genderValue === value;
+            return (
+                <Button
+                    title={label}
+                    type={isActive ? 'solid' : 'outline'}
+                    onPress={() => onGenderSelect(value)}
+                    containerStyle={styles.genderPillContainer}
+                    buttonStyle={[
+                        styles.genderPill,
+                        isActive && {
+                            backgroundColor: theme.colors.primary,
+                            borderColor: theme.colors.primary,
+                        },
+                    ]}
+                    titleStyle={[
+                        styles.genderPillText,
+                        isActive && { color: theme.colors.background },
+                    ]}
+                />
+            );
+        },
+        [genderValue, onGenderSelect, styles, theme.colors],
+    );
 
   return (
     <View style={styles.stepContent}>
       <Text style={styles.stepTitle}>Enter Details</Text>
 
+          {/* Upload Image */}
           <View style={styles.inputContainer}>
               <Text style={styles.label}>Upload Image</Text>
-              <TouchableOpacity style={styles.uploadBox} activeOpacity={0.85} onPress={handleImagePicker}>
+              <TouchableOpacity
+                  style={styles.uploadBox}
+                  activeOpacity={0.85}
+                  onPress={handleImagePicker}>
                   {profileImageValue ? (
                       <Image source={{ uri: profileImageValue }} style={styles.preview} />
                   ) : (
                       <>
-                          <Ionicons name="image-outline" size={moderateScale(22)} color="#9E9E9E" />
+                              <Ionicons
+                                  name="image-outline"
+                                  size={moderateScale(22)}
+                                  color="#9E9E9E"
+                              />
                           <Text style={styles.uploadText}>Upload Image</Text>
                           <Text style={styles.linkText}>Choose from gallery</Text>
                       </>
@@ -121,6 +208,7 @@ const StepDetails: React.FC<Props> = ({
               </TouchableOpacity>
           </View>
 
+          {/* Full Name */}
       <Controller
         control={control}
         name="fullName"
@@ -140,6 +228,7 @@ const StepDetails: React.FC<Props> = ({
         )}
       />
 
+          {/* Email Address */}
       <Controller
         control={control}
         name="email"
@@ -147,14 +236,16 @@ const StepDetails: React.FC<Props> = ({
           <Input
             label="Email Address"
             placeholder="Enter your email"
-            leftIcon={<Ionicons name="mail-outline" size={20} color={theme.colors.grey2} />}
+                leftIcon={
+                    <Ionicons name="mail-outline" size={20} color={theme.colors.grey2} />
+                }
             rightIcon={
               <Button
                     title={otpSent ? 'Resend OTP' : 'Send OTP'}
                 type="solid"
                     onPress={handleSendOtp}
-                    disabled={!emailValid || isSending || otpVerified}
-                    loading={isSending}
+                    disabled={!emailValid || sendOtpMutation.isPending || otpVerified}
+                    loading={sendOtpMutation.isPending}
                 containerStyle={styles.sendOtpButton}
                 buttonStyle={styles.sendOtpButtonStyle}
                 titleStyle={styles.sendOtpTitle}
@@ -170,40 +261,10 @@ const StepDetails: React.FC<Props> = ({
         )}
       />
 
-          {otpSent && (
-              <Controller
-                  control={control}
-                  name="otp"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                      <Input
-                          label="Enter OTP"
-                          placeholder="***************"
-                          leftIcon={<Ionicons name="key-outline" size={20} color={theme.colors.grey2} />}
-                          rightIcon={
-                              <Button
-                                  title="Verify"
-                                  type="outline"
-                                  onPress={handleVerifyOtp}
-                                  loading={isVerifying}
-                                  disabled={otpVerified}
-                                  containerStyle={styles.sendOtpButton}
-                                  buttonStyle={styles.sendOtpButtonStyle}
-                                  titleStyle={styles.sendOtpTitle}
-                              />
-                          }
-                          value={value}
-                          onChangeText={onChange}
-                          onBlur={onBlur}
-              errorMessage={verifyError || errors.otp?.message}
-                          containerStyle={styles.inputContainer}
-                          secureTextEntry
-                      />
-                  )}
-              />
-          )}
-
+          {/* Fields shown after OTP is verified - in order: Gender, Phone, Enter OTP, DOB, Password, Confirm Password */}
           {otpVerified && (
               <>
+                  {/* Gender */}
                   <View style={styles.inlineRow}>
                       <Text style={styles.label}>Gender</Text>
                       <View style={styles.genderRow}>
@@ -213,6 +274,7 @@ const StepDetails: React.FC<Props> = ({
                       </View>
                   </View>
 
+                  {/* Phone */}
                   <Controller
                       control={control}
                       name="phone"
@@ -235,35 +297,106 @@ const StepDetails: React.FC<Props> = ({
                           />
                       )}
                   />
+              </>
+          )}
 
+          {/* Enter OTP - Only shown after OTP is sent */}
+          {otpSent && (
+              <Controller
+                  control={control}
+                  name="otp"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                      <Input
+                          label="Enter OTP"
+                          placeholder="Enter OTP"
+                          leftIcon={
+                              <Ionicons
+                                  name="lock-closed-outline"
+                                  size={20}
+                                  color={theme.colors.grey2}
+                              />
+                          }
+                          rightIcon={
+                              <Button
+                                  title="Verify"
+                                  type="outline"
+                                  onPress={handleVerifyOtp}
+                                  loading={verifyOtpMutation.isPending}
+                                  disabled={otpVerified}
+                                  containerStyle={styles.sendOtpButton}
+                                  buttonStyle={styles.sendOtpButtonStyle}
+                                  titleStyle={styles.sendOtpTitle}
+                              />
+                          }
+                          value={value}
+                          onChangeText={onChange}
+                          onBlur={onBlur}
+                          errorMessage={verifyError || errors.otp?.message}
+                          containerStyle={styles.inputContainer}
+                          secureTextEntry
+                      />
+                  )}
+              />
+          )}
+
+          {/* Remaining fields shown after OTP is verified */}
+          {otpVerified && (
+              <>
+                  {/* Date of Birth */}
                   <Controller
                       control={control}
                       name="dob"
-                      render={({ field: { onChange, onBlur, value } }) => (
-                          <Input
-                              label="Date of Birth"
-                              placeholder="mm/dd/yyyy"
-                              leftIcon={
-                                  <Ionicons name="calendar-outline" size={20} color={theme.colors.grey2} />
-                              }
-                              rightIcon={<Ionicons name="calendar" size={20} color={theme.colors.primary} />}
-                              value={value}
-                              onChangeText={onChange}
-                              onBlur={onBlur}
-                              containerStyle={styles.inputContainer}
-                          />
+                      render={({ field: { value } }) => (
+                          <TouchableOpacity
+                              onPress={handleDateFieldPress}
+                              activeOpacity={0.7}
+                              style={styles.inputContainer}>
+                              <Input
+                                  label="Date of Birth"
+                                  placeholder="mm/dd/yyyy"
+                                  leftIcon={
+                                      <Ionicons
+                                          name="calendar-outline"
+                                          size={20}
+                                          color={theme.colors.grey2}
+                                      />
+                                  }
+                                  rightIcon={
+                                      <Ionicons name="calendar" size={20} color={theme.colors.primary} />
+                                  }
+                                  value={value || ''}
+                                  editable={false}
+                                  errorMessage={errors.dob?.message}
+                                  containerStyle={{ marginBottom: 0 }}
+                              />
+                          </TouchableOpacity>
                       )}
                   />
+                  {/* Date Picker */}
+                  <DatePicker
+                      isVisible={isDatePickerVisible}
+                      value={getInitialDate()}
+                      mode="date"
+                      maximumDate={new Date()} // Cannot select future dates
+                      minimumDate={new Date(1900, 0, 1)} // Minimum date: Jan 1, 1900
+                      onConfirm={handleDatePickerConfirm}
+                      onCancel={handleDatePickerCancel}
+                  />
 
+                  {/* Password */}
                   <Controller
                       control={control}
                       name="password"
                       render={({ field: { onChange, onBlur, value } }) => (
                           <Input
                               label="Password"
-                              placeholder="****************"
+                              placeholder="Enter your password"
                               leftIcon={
-                                  <Ionicons name="lock-closed-outline" size={20} color={theme.colors.grey2} />
+                        <Ionicons
+                            name="lock-closed-outline"
+                            size={20}
+                            color={theme.colors.grey2}
+                        />
                               }
                               value={value}
                               onChangeText={onChange}
@@ -275,15 +408,20 @@ const StepDetails: React.FC<Props> = ({
                       )}
                   />
 
+                  {/* Confirm Password */}
                   <Controller
                       control={control}
                       name="confirmPassword"
                       render={({ field: { onChange, onBlur, value } }) => (
                           <Input
                               label="Confirm Password"
-                              placeholder="****************"
+                              placeholder="Confirm your password"
                               leftIcon={
-                                  <Ionicons name="lock-closed-outline" size={20} color={theme.colors.grey2} />
+                        <Ionicons
+                            name="lock-closed-outline"
+                            size={20}
+                            color={theme.colors.grey2}
+                        />
                               }
                               value={value}
                               onChangeText={onChange}

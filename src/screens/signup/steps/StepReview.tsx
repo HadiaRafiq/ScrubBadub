@@ -5,13 +5,14 @@ import { UseFormWatch } from 'react-hook-form';
 
 import { ScrubSignUpForm } from '..';
 import { SignUpStyles } from '../types';
+import { ROLES } from '@/types/user';
 
 type Props = {
   styles: SignUpStyles;
   theme: any;
   watch: UseFormWatch<ScrubSignUpForm>;
   genderValue?: 'male' | 'female' | 'other';
-    isDuberOrScrub: boolean;
+  roleValue?: ROLES;
 };
 
 const StepReview: React.FC<Props> = ({
@@ -19,7 +20,7 @@ const StepReview: React.FC<Props> = ({
   theme,
   watch,
   genderValue,
-    isDuberOrScrub,
+  roleValue,
 }) => {
   return (
     <View style={styles.stepContent}>
@@ -56,9 +57,11 @@ const StepReview: React.FC<Props> = ({
           <Text style={styles.reviewLabel}>Address:</Text>
           <Text style={styles.reviewValue}>{watch('address') || '-'}</Text>
         </View>
-              {isDuberOrScrub && (
+        {(roleValue === ROLES.SCRUB || roleValue === ROLES.DUBER) && (
           <View style={styles.reviewRow}>
-            <Text style={styles.reviewLabel}>Additional:</Text>
+            <Text style={styles.reviewLabel}>
+              {roleValue === ROLES.SCRUB ? 'Laundry Info:' : 'Additional:'}
+            </Text>
             <Text style={styles.reviewValue}>{watch('additionalInfo') || '-'}</Text>
           </View>
         )}

@@ -11,17 +11,27 @@ import {
 
 interface Props extends InputProps {}
 
-const Input: React.FC<Props> = ({ ...props }) => {
-  const { leftIcon, label, placeholder, secureTextEntry, errorMessage } = props;
+const Input: React.FC<Props> = (props) => {
+  const { leftIcon, label, placeholder, secureTextEntry, errorMessage, rightIcon: propRightIcon, ...restProps } = props;
 
   const [isPasswordHidden, setPasswordHidden] = useState(!!secureTextEntry);
 
   const { theme } = useTheme();
   const styles = useStyles();
 
+  // Use provided rightIcon if exists, otherwise use eye icon for password fields
+  const rightIcon = propRightIcon || (secureTextEntry ? (
+    <Icon
+      name={isPasswordHidden ? 'eye-outline' : 'eye-off-outline'}
+      color={theme.colors.black}
+      size={moderateScale(20)}
+      onPress={() => setPasswordHidden(!isPasswordHidden)}
+    />
+  ) : undefined);
+
   return (
     <RNEInput
-      {...props}
+      {...restProps}
       label={label}
       labelStyle={styles.label}
       inputContainerStyle={styles.input}
@@ -31,16 +41,7 @@ const Input: React.FC<Props> = ({ ...props }) => {
       errorMessage={errorMessage}
       errorStyle={styles.error}
       secureTextEntry={isPasswordHidden && !!secureTextEntry}
-      rightIcon={
-        secureTextEntry ? (
-          <Icon
-            name={isPasswordHidden ? 'eye-outline' : 'eye-off-outline'}
-            color={theme.colors.black}
-            size={moderateScale(20)}
-            onPress={() => setPasswordHidden(!isPasswordHidden)}
-          />
-        ) : undefined
-      }
+      rightIcon={rightIcon}
       rightIconContainerStyle={styles.rightIconContainer}
       leftIcon={leftIcon}
       leftIconContainerStyle={styles.leftIconContainer}

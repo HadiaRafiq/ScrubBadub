@@ -1,16 +1,13 @@
 import * as React from 'react';
 import Svg, { Path, G, Defs, ClipPath, Rect, SvgProps } from 'react-native-svg';
-import { useTheme } from '@rneui/themed';
 
 type DropIconProps = SvgProps & {
   strokeColor?: string;
   fillColor?: string;
 };
 
-const DropIcon = ({ strokeColor, fillColor, ...props }: DropIconProps) => {
-  const {
-    theme: { colors },
-  } = useTheme();
+const DropIcon = ({ strokeColor, fillColor }: DropIconProps) => {
+
 
   const stroke = strokeColor;
   const fill = fillColor;

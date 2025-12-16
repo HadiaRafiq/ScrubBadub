@@ -1,12 +1,11 @@
 import React from 'react';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { makeStyles, Text, useTheme } from '@rneui/themed';
+import { makeStyles, Text } from '@rneui/themed';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 
 const MyDeliveries = () => {
-  const styles = useStyles();
-  const { theme } = useTheme();
+    const styles = useStyles();
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>

@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
-import { makeStyles, Text, useTheme } from '@rneui/themed';
+import { makeStyles, Text } from '@rneui/themed';
 
 import Header from '@/components/Header';
 import { useAuthStore } from '@/store/auth';
@@ -11,8 +11,7 @@ import OrderCard from '@/components/OrderCard';
 import { OrderStatus } from '@/types/order';
 
 const DuberDashboard = () => {
-  const styles = useStyles();
-  const { theme } = useTheme();
+    const styles = useStyles();
   const { user } = useAuthStore();
 
   return (

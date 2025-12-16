@@ -54,8 +54,14 @@ export interface ForgotPasswordResponse {
 export const signIn = async (
   credentials: SignInRequest,
 ): Promise<SignInResponse> => {
-  try {
-    const response = await axiosInstance.post('/auth/login', credentials);
+  const response = await axiosInstance.post<{
+    user: User;
+    authToken: string;
+    status?: boolean;
+    message?: string;
+  }>('/auth/login', credentials);
+
+  if (response.data?.user && response.data?.authToken) {
     return {
       status: true,
       data: {
@@ -63,60 +69,64 @@ export const signIn = async (
         authToken: response.data.authToken,
       },
     };
-  } catch (error: any) {
-    return {
-      status: false,
-      message: error.message || 'Sign in failed',
-    };
   }
+
+  throw new Error(response.data?.message || 'Sign in failed');
 };
 
-export const signUp = async (data: SignUpRequest): Promise<SignUpResponse> => {
-  try {
-    const response = await axiosInstance.post('/auth/signup', data);
-    return {
-      status: true,
-      data: response.data,
-    };
-  } catch (error: any) {
-    return {
-      status: false,
-      message: error.message || 'Sign up failed',
-    };
+export const signUp = async (payload: SignUpRequest): Promise<string> => {
+  const response = await axiosInstance.post<SignUpResponse>(
+    '/auth/signup',
+    payload,
+  );
+
+  if (response.data?.status) {
+    return response.data?.message || 'Sign up successful';
   }
+
+  throw new Error(response.data?.message || 'Sign up failed');
 };
 
-export const sendEmailOtp = async (email: string) => {
-  try {
-    await axiosInstance.post('/auth/send-otp-for-email', { email });
-    return { status: true };
-  } catch (error: any) {
-    return { status: false, message: error?.message || 'Failed to send OTP' };
+export const sendEmailOtp = async (email: string): Promise<string> => {
+  const response = await axiosInstance.post('/auth/send-otp-for-email', {
+    email,
+  });
+  if (response?.status) {
+    return 'OTP sent successfully';
   }
+
+  throw new Error(response.data?.message || 'Failed to send OTP');
 };
 
-export const verifyEmailOtp = async (email: string, otp: string) => {
-  try {
-    await axiosInstance.post('/auth/verify-email-otp', { email, otp });
-    return { status: true };
-  } catch (error: any) {
-    return { status: false, message: error?.message || 'Failed to verify OTP' };
+export const verifyEmailOtp = async (
+  email: string,
+  otp: string,
+): Promise<string> => {
+  const response = await axiosInstance.post<{
+    status: boolean;
+    message?: string;
+  }>('/auth/verify-email-otp', { email, otp });
+
+  if (response.data?.status) {
+    return response.data?.message || 'OTP verified successfully';
   }
+
+  throw new Error(response.data?.message || 'Failed to verify OTP');
 };
 
 export const forgotPassword = async (
-  data: ForgotPasswordRequest,
-): Promise<ForgotPasswordResponse> => {
-  try {
-    const response = await axiosInstance.post('/auth/forgot-password', data);
-    return {
-      status: true,
-      data: response.data,
-    };
-  } catch (error: any) {
-    return {
-      status: false,
-      message: error.message || 'Failed to send password reset email',
-    };
+  payload: ForgotPasswordRequest,
+): Promise<string> => {
+  const response = await axiosInstance.post<ForgotPasswordResponse>(
+    '/auth/forgot-password',
+    payload,
+  );
+
+  if (response.data?.status) {
+    return response.data?.message || 'Password reset email sent successfully';
   }
+
+  throw new Error(
+    response.data?.message || 'Failed to send password reset email',
+  );
 };  

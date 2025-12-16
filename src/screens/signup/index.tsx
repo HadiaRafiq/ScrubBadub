@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   KeyboardAvoidingView,
@@ -83,107 +83,76 @@ const SignUp = () => {
   const { errors, isSubmitting } = formState;
   const roleValue = watch('role');
   const genderValue = watch('gender');
-
-    const isDuberOrScrub = roleValue === ROLES.DUBER || roleValue === ROLES.SCRUB;
+  const [otpVerified, setOtpVerified] = useState(false);
 
   const steps: Step[] = useMemo(() => {
     const base: Step[] = [{ label: 'Role' }, { label: 'Details' }, { label: 'Address' }];
-      if (isDuberOrScrub) {
-      base.push({ label: 'Additional' });
+
+    switch (roleValue) {
+      case ROLES.SCRUB:
+        base.push({ label: 'Laundry' }, { label: 'Review' });
+        break;
+      case ROLES.DUBER:
+        base.push({ label: 'Additional' }, { label: 'Review' });
+        break;
+      case ROLES.BUD:
+      default:
+        base.push({ label: 'Review' });
+        break;
     }
-    base.push({ label: 'Review' });
     return base;
-  }, [isDuberOrScrub]);
+  }, [roleValue]);
 
   const stepFields = useMemo(() => {
-      if (isDuberOrScrub) {
-      return {
-        0: ['role'],
-        1: ['fullName', 'email', 'phone', 'password', 'confirmPassword'],
-        2: ['address', 'city', 'state', 'country', 'postalCode'],
-        3: ['additionalInfo'],
-        4: [],
-      } as Record<number, (keyof ScrubSignUpForm)[]>;
-    }
-    return {
+    const baseFields = {
       0: ['role'],
       1: ['fullName', 'email', 'phone', 'password', 'confirmPassword'],
       2: ['address', 'city', 'state', 'country', 'postalCode'],
-      3: [],
     } as Record<number, (keyof ScrubSignUpForm)[]>;
-  }, [isDuberOrScrub]);
+
+    switch (roleValue) {
+      case ROLES.SCRUB:
+        return {
+          ...baseFields,
+          3: ['additionalInfo'], // Laundry info fields
+          4: [], // Review
+        };
+      case ROLES.DUBER:
+        return {
+          ...baseFields,
+          3: ['additionalInfo'], // Duber-specific fields (placeholder)
+          4: [], // Review
+        };
+      case ROLES.BUD:
+      default:
+        return {
+          ...baseFields,
+          3: [], // Review
+        };
+    }
+  }, [roleValue]);
 
   const { currentStep, nextStep, previousStep, isFirstStep, isLastStep } =
     useMultiStepForm(steps.length, form, {
       stepFields,
     });
 
+  // Reset OTP verification state when leaving step 1
+  useEffect(() => {
+    if (currentStep !== 1) {
+      setOtpVerified(false);
+    }
+  }, [currentStep]);
+
   const countryOptions = useMemo(
     () => [
       { label: 'United States', value: 'USA' },
-      { label: 'United Kingdom', value: 'UK' },
-      { label: 'Canada', value: 'CAN' },
     ],
     [],
   );
 
   const renderStepContent = () => {
-      if (isDuberOrScrub) {
-      switch (currentStep) {
-        case 0:
-          return (
-            <StepRole
-              styles={styles}
-              theme={theme}
-              roleValue={roleValue}
-              onSelectRole={role => setValue('role', role)}
-            />
-          );
-        case 1:
-          return (
-            <StepDetails
-              styles={styles}
-              theme={theme}
-              control={control}
-              errors={errors}
-              genderValue={genderValue}
-              onGenderSelect={value => setValue('gender', value)}
-              setValue={setValue}
-            />
-          );
-        case 2:
-          return (
-            <StepAddress
-              styles={styles}
-              theme={theme}
-              control={control}
-              errors={errors}
-              countryOptions={countryOptions}
-            />
-          );
-        case 3:
-          return (
-            <StepAdditional
-              styles={styles}
-              control={control}
-              errors={errors}
-            />
-          );
-        case 4:
-          return (
-            <StepReview
-              styles={styles}
-              theme={theme}
-              watch={watch}
-              genderValue={genderValue}
-                  isDuberOrScrub={isDuberOrScrub}
-            />
-          );
-        default:
-          return null;
-      }
-    }
-
+    // Common steps for all roles
     switch (currentStep) {
       case 0:
         return (
@@ -204,6 +173,7 @@ const SignUp = () => {
             genderValue={genderValue}
             onGenderSelect={value => setValue('gender', value)}
             setValue={setValue}
+            onOtpVerifiedChange={setOtpVerified}
           />
         );
       case 2:
@@ -214,16 +184,40 @@ const SignUp = () => {
             control={control}
             errors={errors}
             countryOptions={countryOptions}
+            setValue={setValue}
           />
         );
       case 3:
+        // Step 3 varies by role
+        if (roleValue === ROLES.BUD) {
+          return (
+            <StepReview
+              styles={styles}
+              theme={theme}
+              watch={watch}
+              genderValue={genderValue}
+              roleValue={roleValue}
+            />
+          );
+        }
+        // For Scrub and Duber, step 3 is role-specific
+        return (
+          <StepAdditional
+            styles={styles}
+            control={control}
+            errors={errors}
+            roleValue={roleValue}
+          />
+        );
+      case 4:
+        // Step 4 is Review for Scrub and Duber only
         return (
           <StepReview
             styles={styles}
             theme={theme}
             watch={watch}
             genderValue={genderValue}
-                isDuberOrScrub={false}
+            roleValue={roleValue}
           />
         );
       default:
@@ -266,14 +260,15 @@ const SignUp = () => {
               title="Submit & Create Account"
               onPress={handleSubmit(onSubmit)}
               loading={isSubmitting}
-                          containerStyle={styles.buttonContainer}
+              containerStyle={styles.buttonContainer}
             />
           ) : (
-                          <Button
-                              title="Continue"
-                              onPress={nextStep}
-                              containerStyle={styles.buttonContainer}
-                          />
+              <Button
+                title="Continue"
+                onPress={nextStep}
+                disabled={currentStep === 1 && !otpVerified}
+                containerStyle={styles.buttonContainer}
+              />
           )}
         </View>
       </KeyboardAvoidingView>
@@ -321,32 +316,36 @@ const useStyles = makeStyles(theme => ({
   },
   roleCard: {
     borderWidth: 1,
-    borderColor: '#E6E6E6',
+    borderColor: 'transparent',
     borderRadius: moderateScale(12),
     padding: moderateScale(16),
-    backgroundColor: '#F9F9F9',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: moderateScale(12),
   },
   roleCardSelected: {
     borderWidth: 1,
+    borderColor: 'transparent',
   },
   roleCardIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
+    width: 48,
+    height: 48,
+    borderRadius: moderateScale(8),
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#E5F7F4',
-    marginBottom: verticalScale(8),
+    backgroundColor: '#FFFFFF',
+  },
+  roleCardTextContainer: {
+    flex: 1,
+    gap: verticalScale(4),
   },
   roleCardTitle: {
     fontSize: moderateScale(16),
     fontWeight: '600',
-    color: '#1D1D1D',
     marginBottom: verticalScale(4),
   },
   roleCardDescription: {
     fontSize: moderateScale(14),
-    color: theme.colors.grey2,
   },
   inputContainer: {
     marginBottom: verticalScale(12),

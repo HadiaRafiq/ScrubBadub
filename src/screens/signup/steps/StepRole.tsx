@@ -8,66 +8,81 @@ import { SignUpStyles } from '../types';
 
 type Props = {
   styles: SignUpStyles;
-  theme: any;
+    theme?: any; // Not used but kept for compatibility with parent component
   roleValue?: ROLES;
   onSelectRole: (role: ROLES) => void;
 };
 
-const roleCards = (theme: any) => [
+const roleCards = [
   {
     role: ROLES.BUD,
     title: 'Bud (Customer)',
     description: 'Get your laundry done by professional service providers',
     icon: 'people-outline',
-    containerStyle: { backgroundColor: '#E1FFFA' },
-    textColor: '#0FAF9C',
-    iconColor: theme.colors.primary,
+        defaultBackground: '#E1FFFA',
+        selectedBackground: '#0FAF9C',
+        defaultTextColor: '#0FAF9C',
+        selectedTextColor: '#0FAF9C',
+        defaultIconColor: '#0FAF9C',
+        selectedIconColor: '#0FAF9C',
   },
   {
     role: ROLES.SCRUB,
     title: 'Scrub (Service Provider)',
     description: 'Offer laundry services and earn money on your schedule',
-    icon: 'briefcase-outline',
-    containerStyle: { backgroundColor: '#E7FFED' },
-    textColor: '#1C9B64',
-    iconColor: '#1C9B64',
+      icon: 'star-outline',
+      defaultBackground: '#E7FFED',
+      selectedBackground: '#1C9B64',
+      defaultTextColor: '#1C9B64',
+      selectedTextColor: '#1C9B64',
+      defaultIconColor: '#1C9B64',
+      selectedIconColor: '#1C9B64',
   },
   {
     role: ROLES.DUBER,
     title: 'Duber (Driver)',
     description: 'Deliver laundry and earn money with flexible hours',
     icon: 'car-outline',
-    containerStyle: { backgroundColor: '#F3E8FF' },
-    textColor: '#8C3CD5',
-    iconColor: '#8C3CD5',
+      defaultBackground: '#F3E8FF',
+      selectedBackground: '#8C3CD5',
+      defaultTextColor: '#8C3CD5',
+      selectedTextColor: '#8C3CD5',
+      defaultIconColor: '#8C3CD5',
+      selectedIconColor: '#8C3CD5',
   },
 ];
 
-const StepRole: React.FC<Props> = ({ styles, theme, roleValue, onSelectRole }) => {
+const StepRole: React.FC<Props> = ({ styles, roleValue, onSelectRole }) => {
   return (
     <View style={styles.stepContent}>
       <Text style={styles.stepTitle}>What describes you best?</Text>
       <View style={styles.roleGrid}>
-        {roleCards(theme).map(card => {
+              {roleCards.map(card => {
           const isSelected = roleValue === card.role;
+            const backgroundColor = isSelected ? card.selectedBackground : card.defaultBackground;
+            const titleColor = isSelected ? card.selectedTextColor : card.defaultTextColor;
+            const iconColor = isSelected ? card.selectedIconColor : card.defaultIconColor;
+            const descriptionColor = isSelected ? '#FFFFFF' : '#6B7280'; // White when selected, grey when not
+
           return (
             <TouchableOpacity
               key={card.role}
               style={[
                 styles.roleCard,
-                card.containerStyle,
-                isSelected && [styles.roleCardSelected, { borderColor: theme.colors.primary }],
+                  { backgroundColor },
+                  isSelected && styles.roleCardSelected,
               ]}
               onPress={() => onSelectRole(card.role)}>
               <View style={styles.roleCardIcon}>
-                <Ionicons name={card.icon} size={24} color={card.iconColor} />
+                      <Ionicons name={card.icon} size={24} color={iconColor} />
               </View>
-                  <View style={styles.roleCardTextContainer}> 
-
-              <Text style={[styles.roleCardTitle, { color: card.textColor }]}>
-                {card.title}
-              </Text>
-              <Text style={styles.roleCardDescription}>{card.description}</Text>
+                  <View style={styles.roleCardTextContainer}>
+                      <Text style={[styles.roleCardTitle, { color: titleColor }]}>
+                          {card.title}
+                      </Text>
+                      <Text style={[styles.roleCardDescription, { color: descriptionColor }]}>
+                          {card.description}
+                      </Text>
                   </View>
             </TouchableOpacity>
           );

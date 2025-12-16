@@ -6,7 +6,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { Text, makeStyles, useTheme } from '@rneui/themed';
+import { Text, makeStyles } from '@rneui/themed';
 
 import Button from '@/components/Button';
 import { AUTH_ROUTES, AuthStackNavigatorParamList } from '@/types/routes';
@@ -38,8 +38,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
 };
 
 const Welcome = () => {
-  const styles = useStyles();
-  const { theme } = useTheme();
+    const styles = useStyles();
     const navigation =
         useNavigation<NavigationProp<AuthStackNavigatorParamList>>();
 

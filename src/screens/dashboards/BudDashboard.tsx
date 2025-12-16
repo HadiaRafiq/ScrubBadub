@@ -15,7 +15,7 @@ const BudDashboard = () => {
   const { theme } = useTheme();
   const { user } = useAuthStore();
 
-    // Mock data for current orders - replace with actual data from API/store
+
     const currentOrders = [
         {
             title: 'Order #scrub-odr-q21bx87y',
@@ -33,33 +33,6 @@ const BudDashboard = () => {
         },
     ];
 
-    // Mock data for past orders - replace with actual data from API/store
-    const pastOrders = [
-        {
-            title: 'Order #scrub-odr-q21bx87y',
-            status: OrderStatus.COMPLETED,
-            date: 'Jul 15, 2023',
-            loadSize: '5',
-            price: '$24.99',
-            secondaryLabel: 'Order Again',
-        },
-        {
-            title: 'Order #scrub-odr-q21bx88z',
-            status: OrderStatus.REQUESTED,
-            date: 'Jul 18, 2023',
-            loadSize: '2',
-            price: '$34.99',
-            secondaryLabel: 'Order Now',
-        },
-        {
-            title: 'Order #scrub-odr-q21bx89a',
-            status: OrderStatus.CANCELLED,
-            date: 'Jul 20, 2023',
-            loadSize: '19',
-            price: '$19.99',
-            secondaryLabel: 'Reorder',
-        },
-    ];
 
   return (
       <SafeAreaView style={styles.container} edges={['top', 'bottom']}>

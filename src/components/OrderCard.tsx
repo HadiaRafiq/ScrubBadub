@@ -84,7 +84,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
   );
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(({
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: moderateScale(12),
