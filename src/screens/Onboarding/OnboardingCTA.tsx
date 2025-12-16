@@ -4,7 +4,6 @@ import { moderateScale } from 'react-native-size-matters';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { makeStyles, Text } from '@rneui/themed';
 
-
 type OnboardingCTAProps = {
   label: string;
   onPress: () => void;
@@ -18,7 +17,8 @@ const OnboardingCTA: React.FC<OnboardingCTAProps> = ({ label, onPress }) => {
     <TouchableOpacity
       activeOpacity={0.8}
       style={styles.ctaButton}
-      onPress={onPress}>
+      onPress={onPress}
+    >
       <Text style={styles.ctaLabel}>{label}</Text>
       <View style={styles.ctaIcon}>
         <Icon name="chevron-forward" color={'#FFFFFF'} size={20} />
@@ -27,7 +27,7 @@ const OnboardingCTA: React.FC<OnboardingCTAProps> = ({ label, onPress }) => {
   );
 };
 
-const useStyles = makeStyles(({
+const useStyles = makeStyles({
   ctaButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -57,8 +57,6 @@ const useStyles = makeStyles(({
     shadowRadius: moderateScale(5.8),
     elevation: 6,
   },
-}));
+});
 
 export default OnboardingCTA;
-
-

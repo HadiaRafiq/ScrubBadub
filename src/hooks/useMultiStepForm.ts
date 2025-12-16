@@ -1,5 +1,5 @@
-import { useState, useCallback, useMemo } from 'react';
-import { UseFormReturn, FieldValues, Path } from 'react-hook-form';
+import { useCallback, useMemo, useState } from 'react';
+import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 
 export interface UseMultiStepFormOptions<TFieldValues extends FieldValues> {
   onStepChange?: (step: number) => void;
@@ -26,7 +26,7 @@ export interface UseMultiStepFormReturn {
 export const useMultiStepForm = <TFieldValues extends FieldValues>(
   totalSteps: number,
   form: UseFormReturn<TFieldValues>,
-  options?: UseMultiStepFormOptions<TFieldValues>
+  options?: UseMultiStepFormOptions<TFieldValues>,
 ): UseMultiStepFormReturn => {
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -39,13 +39,14 @@ export const useMultiStepForm = <TFieldValues extends FieldValues>(
       return options.stepFields[currentStep];
     }
     // If no stepFields specified, validate all fields (react-hook-form default behavior)
+
     return [];
   }, [currentStep, options?.stepFields]);
 
   // Validate current step before moving to next
   const nextStep = useCallback(async () => {
     const fieldsToValidate = getCurrentStepFields();
-    
+
     let isValid: boolean;
     if (fieldsToValidate.length > 0) {
       // Validate only the fields for the current step
@@ -79,18 +80,18 @@ export const useMultiStepForm = <TFieldValues extends FieldValues>(
         options?.onStepChange?.(step);
       }
     },
-    [totalSteps, options]
+    [totalSteps, options],
   );
 
   // Check if current step is valid (for UI state)
   const canGoNext = useMemo(() => {
     const fieldsToValidate = getCurrentStepFields();
-    
+
     if (fieldsToValidate.length > 0) {
       // Check if any of the current step's fields have errors
       return !fieldsToValidate.some(field => errors[field]);
     }
-    
+
     // If no stepFields specified, check if form has any errors
     return Object.keys(errors).length === 0;
   }, [errors, getCurrentStepFields]);
@@ -108,4 +109,3 @@ export const useMultiStepForm = <TFieldValues extends FieldValues>(
     canGoNext,
   };
 };
-

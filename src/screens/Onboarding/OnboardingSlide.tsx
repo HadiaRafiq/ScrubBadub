@@ -3,7 +3,6 @@ import { Image, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 import { makeStyles, Text } from '@rneui/themed';
 
-
 import { Slide } from './onboardingData';
 
 type OnboardingSlideProps = {
@@ -23,7 +22,7 @@ const OnboardingSlide: React.FC<OnboardingSlideProps> = ({ slide, width }) => {
   );
 };
 
-const useStyles = makeStyles(({
+const useStyles = makeStyles({
   slide: {
     flex: 1,
     paddingHorizontal: moderateScale(24),
@@ -50,6 +49,6 @@ const useStyles = makeStyles(({
     lineHeight: moderateScale(22),
     // fontFamily: FONTS.INTER,
   },
-}));
+});
 
 export default OnboardingSlide;

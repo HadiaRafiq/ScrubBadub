@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Svg, { Path, G, Defs, ClipPath, Rect, SvgProps } from 'react-native-svg';
+import Svg, { ClipPath, Defs, G, Path, Rect, SvgProps } from 'react-native-svg';
 
 type DropIconProps = SvgProps & {
   strokeColor?: string;
@@ -7,18 +7,11 @@ type DropIconProps = SvgProps & {
 };
 
 const DropIcon = ({ strokeColor, fillColor }: DropIconProps) => {
-
-
   const stroke = strokeColor;
   const fill = fillColor;
 
   return (
-    <Svg
-      width={21}
-      height={28}
-      viewBox="0 0 21 28"
-      fill="none"
-    >
+    <Svg width={21} height={28} viewBox="0 0 21 28" fill="none">
       <Path d="M21 28H0V0H21V28Z" stroke={stroke} />
       <G clipPath="url(#clip0_3206_10324)">
         <G clipPath="url(#clip1_3206_10324)">

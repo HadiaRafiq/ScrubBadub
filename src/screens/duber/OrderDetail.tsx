@@ -1,14 +1,17 @@
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRoute, RouteProp } from '@react-navigation/native';
-import { makeStyles, Text } from '@rneui/themed';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import { makeStyles, Text } from '@rneui/themed';
 
-import { BudStackParamList, BUD_ROUTES } from '@/types/routes';
 import Header from '@/components/Header';
+import { BUD_ROUTES, BudStackParamList } from '@/types/routes';
 
-type OrderDetailRouteProp = RouteProp<BudStackParamList, BUD_ROUTES.ORDER_DETAIL>;
+type OrderDetailRouteProp = RouteProp<
+  BudStackParamList,
+  BUD_ROUTES.ORDER_DETAIL
+>;
 
 const OrderDetail = () => {
   const styles = useStyles();
@@ -20,7 +23,8 @@ const OrderDetail = () => {
       <Header title="Order Details" isBack />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.content}>
           <Text style={styles.orderId}>Order ID: {orderId}</Text>
           {/* Add order details content here */}
@@ -51,4 +55,3 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default OrderDetail;
-

@@ -1,20 +1,15 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { makeStyles, Text } from '@rneui/themed';
 import { z } from 'zod';
 
-import Stepper, { Step } from '@/components/Stepper';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
+import Stepper, { Step } from '@/components/Stepper';
 import { useMultiStepForm } from '@/hooks/useMultiStepForm';
 
 // Define the form data schema
@@ -74,19 +69,13 @@ const MultiStepFormExample = () => {
   };
 
   // Use multi-step form hook
-  const {
-    currentStep,
-    nextStep,
-    previousStep,
-    isFirstStep,
-    isLastStep,
-  } = useMultiStepForm(steps.length, form, {
-    stepFields,
-  });
+  const { currentStep, nextStep, previousStep, isFirstStep, isLastStep } =
+    useMultiStepForm(steps.length, form, {
+      stepFields,
+    });
 
   // Handle form submission
-  const onSubmit = async (data: MultiStepFormData) => {
-    console.log('Form submitted:', data);
+  const onSubmit = (_data: MultiStepFormData) => {
     // Handle form submission logic here
     // e.g., API call, navigation, etc.
   };
@@ -268,7 +257,8 @@ const MultiStepFormExample = () => {
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}>
+        style={styles.keyboardView}
+      >
         {/* Stepper at the top */}
         <View style={styles.stepperContainer}>
           <Stepper steps={steps} currentStep={currentStep} />
@@ -278,7 +268,8 @@ const MultiStepFormExample = () => {
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}>
+          showsVerticalScrollIndicator={false}
+        >
           {renderStepContent()}
         </ScrollView>
 
@@ -338,7 +329,7 @@ const useStyles = makeStyles(theme => ({
   stepTitle: {
     fontSize: moderateScale(24),
     fontWeight: '700',
-    color: (theme.colors as any).text || theme.colors.black || '#252525',
+    color: theme.colors.black || '#252525',
     marginBottom: verticalScale(24),
   },
   inputContainer: {
@@ -353,12 +344,12 @@ const useStyles = makeStyles(theme => ({
   summaryTitle: {
     fontSize: moderateScale(18),
     fontWeight: '700',
-    color: (theme.colors as any).text || theme.colors.black || '#252525',
+    color: theme.colors.black || '#252525',
     marginBottom: verticalScale(12),
   },
   summaryText: {
     fontSize: moderateScale(14),
-    color: (theme.colors as any).text || theme.colors.black || '#252525',
+    color: theme.colors.black || '#252525',
     marginBottom: verticalScale(8),
   },
   navigationContainer: {
@@ -383,4 +374,3 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default MultiStepFormExample;
-

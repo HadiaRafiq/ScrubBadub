@@ -1,12 +1,13 @@
 import React from 'react';
+import { Control, Controller, FieldErrors } from 'react-hook-form';
 import { View } from 'react-native';
-import { Controller, Control, FieldErrors } from 'react-hook-form';
 import { Text } from '@rneui/themed';
 
 import Input from '@/components/Input';
-import { ScrubSignUpForm } from '..';
-import { SignUpStyles } from '../types';
 import { ROLES } from '@/types/user';
+
+import { SignUpStyles } from '../types';
+import { ScrubSignUpForm } from '..';
 
 type Props = {
   styles: SignUpStyles;
@@ -15,7 +16,12 @@ type Props = {
   roleValue?: ROLES;
 };
 
-const StepAdditional: React.FC<Props> = ({ styles, control, errors, roleValue }) => {
+const StepAdditional: React.FC<Props> = ({
+  styles,
+  control,
+  errors,
+  roleValue,
+}) => {
   const getStepTitle = () => {
     switch (roleValue) {
       case ROLES.SCRUB:
@@ -86,4 +92,3 @@ const StepAdditional: React.FC<Props> = ({ styles, control, errors, roleValue })
 };
 
 export default StepAdditional;
-

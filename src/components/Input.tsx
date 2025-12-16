@@ -8,11 +8,18 @@ import {
   useTheme,
 } from '@rneui/themed';
 
-
 interface Props extends InputProps {}
 
-const Input: React.FC<Props> = (props) => {
-  const { leftIcon, label, placeholder, secureTextEntry, errorMessage, rightIcon: propRightIcon, ...restProps } = props;
+const Input: React.FC<Props> = props => {
+  const {
+    leftIcon,
+    label,
+    placeholder,
+    secureTextEntry,
+    errorMessage,
+    rightIcon: propRightIcon,
+    ...restProps
+  } = props;
 
   const [isPasswordHidden, setPasswordHidden] = useState(!!secureTextEntry);
 
@@ -20,14 +27,16 @@ const Input: React.FC<Props> = (props) => {
   const styles = useStyles();
 
   // Use provided rightIcon if exists, otherwise use eye icon for password fields
-  const rightIcon = propRightIcon || (secureTextEntry ? (
-    <Icon
-      name={isPasswordHidden ? 'eye-outline' : 'eye-off-outline'}
-      color={theme.colors.black}
-      size={moderateScale(20)}
-      onPress={() => setPasswordHidden(!isPasswordHidden)}
-    />
-  ) : undefined);
+  const rightIcon =
+    propRightIcon ||
+    (secureTextEntry ? (
+      <Icon
+        name={isPasswordHidden ? 'eye-outline' : 'eye-off-outline'}
+        color={theme.colors.black}
+        size={moderateScale(20)}
+        onPress={() => setPasswordHidden(!isPasswordHidden)}
+      />
+    ) : undefined);
 
   return (
     <RNEInput

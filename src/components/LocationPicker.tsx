@@ -1,11 +1,11 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
+import Config from 'react-native-config';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { makeStyles, Button, Overlay, Text } from '@rneui/themed';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Button, makeStyles, Overlay, Text } from '@rneui/themed';
 import Mapbox from '@rnmapbox/maps';
-import Config from 'react-native-config';
 
 export interface LocationData {
   latitude: number;
@@ -43,6 +43,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
         ) {
           return initialLocation;
         }
+
         return prev;
       });
     }
@@ -50,7 +51,10 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
 
   // Reverse geocode coordinates to get zipcode, city, and state
   const reverseGeocode = useCallback(
-    async (latitude: number, longitude: number): Promise<{
+    async (
+      latitude: number,
+      longitude: number,
+    ): Promise<{
       zipCode?: string;
       city?: string;
       state?: string;
@@ -59,6 +63,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
         const accessToken = Config.MAP_BOX_PUBLIC_ACCESS_TOKEN;
         if (!accessToken) {
           console.warn('Mapbox access token not found');
+
           return {};
         }
 
@@ -108,6 +113,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
         return { zipCode, city, state };
       } catch (error) {
         console.error('Reverse geocoding error:', error);
+
         return {};
       }
     },
@@ -130,19 +136,25 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
   }, [selectedLocation, onLocationSelect, onClose, reverseGeocode]);
 
   // Handle map press to update selected location
-  const handleMapPress = useCallback((e: any) => {
-    const { geometry } = e;
-    if (geometry && geometry.coordinates) {
-      const [longitude, latitude] = geometry.coordinates;
-      setSelectedLocation({ latitude, longitude });
-    }
-  }, []);
+  const handleMapPress = useCallback(
+    (e: { geometry: { coordinates: [number, number] } }) => {
+      const { geometry } = e;
+      if (geometry && geometry.coordinates) {
+        const [longitude, latitude] = geometry.coordinates;
+        setSelectedLocation({ latitude, longitude });
+      }
+    },
+    [],
+  );
 
   // Update camera when location changes (only when user selects a new location, not on mount)
   useEffect(() => {
     if (cameraRef.current && isVisible) {
       cameraRef.current.setCamera({
-        centerCoordinate: [selectedLocation.longitude, selectedLocation.latitude],
+        centerCoordinate: [
+          selectedLocation.longitude,
+          selectedLocation.latitude,
+        ],
         zoomLevel: 15,
         animationDuration: 200,
       });
@@ -154,14 +166,17 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       isVisible={isVisible}
       onBackdropPress={onClose}
       overlayStyle={styles.overlay}
-      fullScreen>
+      fullScreen
+    >
       <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Select Location</Text>
           <Button
             type="clear"
-            icon={<Ionicons name="close" size={moderateScale(24)} color="#000" />}
+            icon={
+              <Ionicons name="close" size={moderateScale(24)} color="#000" />
+            }
             onPress={onClose}
           />
         </View>
@@ -173,19 +188,31 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
             onPress={handleMapPress}
             styleURL={Mapbox.StyleURL.Street}
             logoEnabled={false}
-            attributionEnabled={false}>
+            attributionEnabled={false}
+          >
             <Mapbox.Camera
               ref={cameraRef}
               zoomLevel={15}
-              centerCoordinate={[selectedLocation.longitude, selectedLocation.latitude]}
+              centerCoordinate={[
+                selectedLocation.longitude,
+                selectedLocation.latitude,
+              ]}
               animationMode="flyTo"
               animationDuration={2000}
             />
             <Mapbox.PointAnnotation
               id="selectedLocation"
-              coordinate={[selectedLocation.longitude, selectedLocation.latitude]}>
+              coordinate={[
+                selectedLocation.longitude,
+                selectedLocation.latitude,
+              ]}
+            >
               <View style={styles.markerContainer}>
-                <Ionicons name="location" size={moderateScale(30)} color="#EF4444" />
+                <Ionicons
+                  name="location"
+                  size={moderateScale(30)}
+                  color="#EF4444"
+                />
               </View>
             </Mapbox.PointAnnotation>
           </Mapbox.MapView>
@@ -286,4 +313,3 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default LocationPicker;
-

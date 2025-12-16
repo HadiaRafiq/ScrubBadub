@@ -5,7 +5,6 @@ import Icon from 'react-native-vector-icons/Feather';
 import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { makeStyles, Text, useTheme } from '@rneui/themed';
 
-
 interface Props {
   title: string;
   isBack?: boolean;
@@ -45,7 +44,7 @@ const Header: React.FC<Props> = ({ title, isBack = false, onBackPress }) => {
         <Icon
           name="menu"
           size={28}
-            color={theme.colors.grey2}
+          color={theme.colors.grey2}
           onPress={openDrawer}
         />
       )}

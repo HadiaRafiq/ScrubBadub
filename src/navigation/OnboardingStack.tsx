@@ -2,10 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Onboarding from '@/screens/Onboarding';
-import {
-  OnboardingStackParamList,
-  ONBOARDING_ROUTES,
-} from '@/types/routes';
+import { ONBOARDING_ROUTES, OnboardingStackParamList } from '@/types/routes';
 
 const Stack = createNativeStackNavigator<OnboardingStackParamList>();
 
@@ -15,7 +12,8 @@ const OnboardingStack = () => {
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
-      }}>
+      }}
+    >
       <Stack.Screen
         name={ONBOARDING_ROUTES.ONBOARDING}
         component={Onboarding}
@@ -25,4 +23,3 @@ const OnboardingStack = () => {
 };
 
 export default OnboardingStack;
-

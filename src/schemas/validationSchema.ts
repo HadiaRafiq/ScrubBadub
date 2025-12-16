@@ -1,5 +1,6 @@
-import { ROLES } from '@/types/user';
 import { z } from 'zod';
+
+import { ROLES } from '@/types/user';
 
 export const signInSchema = z.object({
   email: z

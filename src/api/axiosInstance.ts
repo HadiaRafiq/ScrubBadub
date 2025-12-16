@@ -1,7 +1,7 @@
+import Config from 'react-native-config';
 import axios from 'axios';
 
 import { useAuthStore } from '@/store/auth';
-import Config from 'react-native-config';
 
 const axiosInstance = axios.create({
   baseURL: Config.API_URL,

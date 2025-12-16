@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
-import { Text, makeStyles, useTheme } from '@rneui/themed';
+import { makeStyles, Text, useTheme } from '@rneui/themed';
 
 export interface Step {
   label?: string;
@@ -58,14 +58,13 @@ const Stepper: React.FC<StepperProps> = ({
                   style={[
                     styles.stepCircle,
                     {
-                      backgroundColor: isStepActive ? activeStepColor : inactiveStepBg,
+                      backgroundColor: isStepActive
+                        ? activeStepColor
+                        : inactiveStepBg,
                     },
-                  ]}>
-                  <Text
-                    style={[
-                      styles.stepNumber,
-                      { color: stepNumberColor },
-                    ]}>
+                  ]}
+                >
+                  <Text style={[styles.stepNumber, { color: stepNumberColor }]}>
                     {index + 1}
                   </Text>
                 </View>
@@ -80,7 +79,8 @@ const Stepper: React.FC<StepperProps> = ({
                         fontWeight: labelWeight,
                       },
                     ]}
-                    numberOfLines={2}>
+                    numberOfLines={2}
+                  >
                     {step.label}
                   </Text>
                 )}
@@ -92,7 +92,9 @@ const Stepper: React.FC<StepperProps> = ({
                   style={[
                     styles.connector,
                     {
-                      backgroundColor: isConnectorActive ? activeConnectorColor : inactiveConnectorColor,
+                      backgroundColor: isConnectorActive
+                        ? activeConnectorColor
+                        : inactiveConnectorColor,
                     },
                   ]}
                 />
@@ -155,4 +157,3 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default Stepper;
-

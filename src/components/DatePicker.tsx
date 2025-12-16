@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Platform, Modal, View, TouchableOpacity, StyleSheet } from 'react-native';
-import { Text } from '@rneui/themed';
+import React, { useEffect, useState } from 'react';
+import {
+  Modal,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { Text } from '@rneui/themed';
 
 type DatePickerProps = {
   isVisible: boolean;
@@ -33,7 +39,10 @@ const DatePicker: React.FC<DatePickerProps> = ({
     }
   }, [isVisible, value]);
 
-  const handleChange = (event: any, date?: Date) => {
+  const handleChange = (
+    event: { type: string; nativeEvent: object },
+    date?: Date,
+  ) => {
     if (Platform.OS === 'android') {
       // Android handles its own modal
       if (event.type === 'set' && date) {
@@ -77,7 +86,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
       visible={isVisible}
       transparent
       animationType="slide"
-      onRequestClose={onCancel}>
+      onRequestClose={onCancel}
+    >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
@@ -85,7 +95,10 @@ const DatePicker: React.FC<DatePickerProps> = ({
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
             <Text style={styles.modalTitle}>Select Date</Text>
-            <TouchableOpacity onPress={handleIOSConfirm} style={styles.confirmButton}>
+            <TouchableOpacity
+              onPress={handleIOSConfirm}
+              style={styles.confirmButton}
+            >
               <Text style={styles.confirmButtonText}>Done</Text>
             </TouchableOpacity>
           </View>
@@ -152,4 +165,3 @@ const styles = StyleSheet.create({
 });
 
 export default DatePicker;
-

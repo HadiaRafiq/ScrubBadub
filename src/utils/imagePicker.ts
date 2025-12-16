@@ -1,9 +1,9 @@
-import { Platform, Alert, Linking, PermissionsAndroid } from 'react-native';
+import { Alert, Linking, PermissionsAndroid, Platform } from 'react-native';
 import {
-  launchImageLibrary,
-  MediaType,
   Asset,
   ImagePickerResponse,
+  launchImageLibrary,
+  MediaType,
 } from 'react-native-image-picker';
 
 const requestGalleryPermission = async () => {
@@ -68,6 +68,7 @@ export const pickImage = (): Promise<Asset | null> => {
         'Please grant permission to access your gallery',
       );
       resolve(null);
+
       return;
     }
 
@@ -82,6 +83,7 @@ export const pickImage = (): Promise<Asset | null> => {
       (result: ImagePickerResponse) => {
         if (result.didCancel) {
           resolve(null);
+
           return;
         }
 
@@ -91,11 +93,13 @@ export const pickImage = (): Promise<Asset | null> => {
             result.errorMessage || 'Unable to pick image',
           );
           resolve(null);
+
           return;
         }
 
         if (result.assets && result.assets.length > 0) {
           resolve(result.assets[0]);
+
           return;
         }
 

@@ -1,3 +1,1 @@
-export enum REACT_QUERY_KEYS {
-
-}
+export enum REACT_QUERY_KEYS {}

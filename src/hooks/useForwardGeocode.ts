@@ -1,5 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
 import Config from 'react-native-config';
+import { useMutation } from '@tanstack/react-query';
+
 import { forwardGeocode, ForwardGeocodeResult } from '@/utils/geocoding';
 import { showErrorToast } from '@/utils/toast';
 
@@ -10,7 +11,8 @@ export const useForwardGeocode = () => {
       if (!accessToken) {
         throw new Error('Mapbox configuration missing');
       }
-      return forwardGeocode(zipCode, accessToken);
+
+      return await forwardGeocode(zipCode, accessToken);
     },
     onError: (error: Error) => {
       const errorMessage =

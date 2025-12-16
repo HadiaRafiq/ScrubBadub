@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
+
 import { verifyEmailOtp } from '@/api/authService';
-import { showSuccessToast, showErrorToast } from '@/utils/toast';
+import { showErrorToast, showSuccessToast } from '@/utils/toast';
 
 export interface VerifyEmailOtpRequest {
   email: string;
@@ -22,9 +23,9 @@ export const useVerifyEmailOtp = () => {
         'Email Verified',
       );
     },
-    onError: (error: Error) => {
+    onError: (err: Error) => {
       const errorMsg =
-        error.message || 'An unexpected error occurred. Please try again.';
+        err.message || 'An unexpected error occurred. Please try again.';
       setOtpVerified(false);
       setError(errorMsg);
       showErrorToast(errorMsg, 'Verification Failed');
@@ -43,4 +44,3 @@ export const useVerifyEmailOtp = () => {
     reset,
   };
 };
-

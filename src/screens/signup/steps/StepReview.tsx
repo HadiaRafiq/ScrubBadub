@@ -1,15 +1,16 @@
 import React from 'react';
-import { View } from 'react-native';
-import { Text } from '@rneui/themed';
 import { UseFormWatch } from 'react-hook-form';
+import { View } from 'react-native';
+import { Text, Theme } from '@rneui/themed';
 
-import { ScrubSignUpForm } from '..';
-import { SignUpStyles } from '../types';
 import { ROLES } from '@/types/user';
+
+import { SignUpStyles } from '../types';
+import { ScrubSignUpForm } from '..';
 
 type Props = {
   styles: SignUpStyles;
-  theme: any;
+  theme: Theme;
   watch: UseFormWatch<ScrubSignUpForm>;
   genderValue?: 'male' | 'female' | 'other';
   roleValue?: ROLES;
@@ -31,7 +32,9 @@ const StepReview: React.FC<Props> = ({
       <View style={styles.reviewCard}>
         <View style={styles.reviewHeader}>
           <Text style={styles.reviewTitle}>Personal Info</Text>
-          <Text style={[styles.reviewEdit, { color: theme.colors.primary }]}>Edit</Text>
+          <Text style={[styles.reviewEdit, { color: theme.colors.primary }]}>
+            Edit
+          </Text>
         </View>
         <View style={styles.reviewRow}>
           <Text style={styles.reviewLabel}>Name:</Text>
@@ -62,7 +65,9 @@ const StepReview: React.FC<Props> = ({
             <Text style={styles.reviewLabel}>
               {roleValue === ROLES.SCRUB ? 'Laundry Info:' : 'Additional:'}
             </Text>
-            <Text style={styles.reviewValue}>{watch('additionalInfo') || '-'}</Text>
+            <Text style={styles.reviewValue}>
+              {watch('additionalInfo') || '-'}
+            </Text>
           </View>
         )}
       </View>
@@ -71,4 +76,3 @@ const StepReview: React.FC<Props> = ({
 };
 
 export default StepReview;
-

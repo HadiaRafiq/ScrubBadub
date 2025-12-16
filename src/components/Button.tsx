@@ -27,7 +27,7 @@ const Button: React.FC<Props> = ({ ...props }) => {
   );
 };
 
-const useStyles = makeStyles(({
+const useStyles = makeStyles({
   button: {
     borderRadius: 12,
     padding: moderateScale(14),
@@ -56,6 +56,6 @@ const useStyles = makeStyles(({
   disabledButtonOutlineTitle: {
     // color: `${theme.colors.grey2}80`,
   },
-}));
+});
 
 export default Button;

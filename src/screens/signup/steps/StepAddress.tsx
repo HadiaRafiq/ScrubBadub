@@ -1,140 +1,153 @@
-import React, { useCallback, useState, useMemo } from 'react';
-import { View, TouchableOpacity, ActivityIndicator } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Controller, Control, FieldErrors, UseFormSetValue, useWatch } from 'react-hook-form';
-import { Text, makeStyles } from '@rneui/themed';
+import React, { useCallback, useMemo, useState } from 'react';
+import {
+  Control,
+  Controller,
+  FieldErrors,
+  UseFormSetValue,
+  useWatch,
+} from 'react-hook-form';
+import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { makeStyles, Text } from '@rneui/themed';
 
 import Dropdown from '@/components/Dropdown';
 import Input from '@/components/Input';
 import LocationPicker, { LocationData } from '@/components/LocationPicker';
 import { useForwardGeocode } from '@/hooks/useForwardGeocode';
-import { ScrubSignUpForm } from '..';
+
 import { SignUpStyles } from '../types';
+import { ScrubSignUpForm } from '..';
 
 type CountryOption = { label: string; value: string };
 
 type Props = {
   styles: SignUpStyles;
-  theme: any;
   control: Control<ScrubSignUpForm>;
   errors: FieldErrors<ScrubSignUpForm>;
   countryOptions: CountryOption[];
-    setValue: UseFormSetValue<ScrubSignUpForm>;
+  setValue: UseFormSetValue<ScrubSignUpForm>;
 };
 
 const useLocalStyles = makeStyles(() => ({
-    pinLocationLabelContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: verticalScale(8),
-    },
-    pinLocationIcon: {
-        marginLeft: moderateScale(4),
-    },
-    pinLocationInputContainer: {
-        marginBottom: 0,
-    },
-    pinLocationButton: {
-        width: moderateScale(32),
-        height: moderateScale(32),
-        borderRadius: moderateScale(16),
-        backgroundColor: '#10B981',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
+  pinLocationLabelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: verticalScale(8),
+  },
+  pinLocationIcon: {
+    marginLeft: moderateScale(4),
+  },
+  pinLocationInputContainer: {
+    marginBottom: 0,
+  },
+  pinLocationButton: {
+    width: moderateScale(32),
+    height: moderateScale(32),
+    borderRadius: moderateScale(16),
+    backgroundColor: '#10B981',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 }));
 
 const StepAddress: React.FC<Props> = ({
-    styles,
+  styles,
   control,
   errors,
   countryOptions,
-    setValue,
+  setValue,
 }) => {
-    const localStyles = useLocalStyles();
-    const pinLocation = useWatch({ control, name: 'pinLocation' });
-    const [isLocationPickerVisible, setIsLocationPickerVisible] = useState(false);
-    const forwardGeocodeMutation = useForwardGeocode();
+  const localStyles = useLocalStyles();
+  const pinLocation = useWatch({ control, name: 'pinLocation' });
+  const [isLocationPickerVisible, setIsLocationPickerVisible] = useState(false);
+  const forwardGeocodeMutation = useForwardGeocode();
 
-    // Parse existing location if available - memoize to prevent unnecessary re-renders
-    const parsedLocation = useMemo(() => {
-        if (!pinLocation) return undefined;
-        const match = pinLocation.match(/\(([-\d.]+),\s*([-\d.]+)\)/);
-        if (match) {
-            return {
-                latitude: parseFloat(match[1]),
-                longitude: parseFloat(match[2]),
-            };
-        }
-        return undefined;
-    }, [pinLocation]);
+  // Parse existing location if available - memoize to prevent unnecessary re-renders
+  const parsedLocation = useMemo(() => {
+    if (!pinLocation) return undefined;
+    const match = pinLocation.match(/\(([-\d.]+),\s*([-\d.]+)\)/);
+    if (match) {
+      return {
+        latitude: parseFloat(match[1]),
+        longitude: parseFloat(match[2]),
+      };
+    }
 
-    // Format location to display format
-    const formatLocation = useCallback((latitude: number, longitude: number) => {
-        return `Location (${latitude.toFixed(6)}, ${longitude.toFixed(6)})`;
-    }, []);
+    return undefined;
+  }, [pinLocation]);
 
-    const handlePinLocationPress = useCallback(() => {
-        setIsLocationPickerVisible(true);
-    }, []);
+  // Format location to display format
+  const formatLocation = useCallback((latitude: number, longitude: number) => {
+    return `Location (${latitude.toFixed(6)}, ${longitude.toFixed(6)})`;
+  }, []);
 
-    const handleLocationSelect = useCallback(
-        (location: LocationData) => {
-            const locationString = formatLocation(location.latitude, location.longitude);
-            setValue('pinLocation', locationString, { shouldValidate: true });
+  const handlePinLocationPress = useCallback(() => {
+    setIsLocationPickerVisible(true);
+  }, []);
 
-            // Fill zipcode, city, and state if available from reverse geocoding
-            if (location.zipCode) {
-                setValue('postalCode', location.zipCode, { shouldValidate: true });
-            }
-            if (location.city) {
-                setValue('city', location.city, { shouldValidate: true });
-            }
-            if (location.state) {
-                setValue('state', location.state, { shouldValidate: true });
-            }
-        },
-        [setValue, formatLocation],
-    );
+  const handleLocationSelect = useCallback(
+    (location: LocationData) => {
+      const locationString = formatLocation(
+        location.latitude,
+        location.longitude,
+      );
+      setValue('pinLocation', locationString, { shouldValidate: true });
 
-    const handleZipCodeBlur = useCallback(
-        async (zipCode: string) => {
-            // Only geocode if zipcode has value and is at least 5 characters
-            if (!zipCode || zipCode.trim().length < 5) {
-                return;
-            }
+      // Fill zipcode, city, and state if available from reverse geocoding
+      if (location.zipCode) {
+        setValue('postalCode', location.zipCode, { shouldValidate: true });
+      }
+      if (location.city) {
+        setValue('city', location.city, { shouldValidate: true });
+      }
+      if (location.state) {
+        setValue('state', location.state, { shouldValidate: true });
+      }
+    },
+    [setValue, formatLocation],
+  );
 
-            try {
-                const result = await forwardGeocodeMutation.mutateAsync(zipCode.trim());
+  const handleZipCodeBlur = useCallback(
+    async (zipCode: string) => {
+      // Only geocode if zipcode has value and is at least 5 characters
+      if (!zipCode || zipCode.trim().length < 5) {
+        return;
+      }
 
-                // Auto-fill city, state, and pinLocation
-                setValue('city', result.city, { shouldValidate: true });
-                setValue('state', result.state, { shouldValidate: true });
+      try {
+        const result = await forwardGeocodeMutation.mutateAsync(zipCode.trim());
 
-                // Format coordinates same as LocationPicker
-                const locationString = formatLocation(result.latitude, result.longitude);
-                setValue('pinLocation', locationString, { shouldValidate: true });
-            } catch (error) {
-                // Error toast is already shown by the hook
-                console.error('Forward geocoding failed:', error);
-            }
-        },
-        [forwardGeocodeMutation, setValue, formatLocation],
-    );
+        // Auto-fill city, state, and pinLocation
+        setValue('city', result.city, { shouldValidate: true });
+        setValue('state', result.state, { shouldValidate: true });
+
+        // Format coordinates same as LocationPicker
+        const locationString = formatLocation(
+          result.latitude,
+          result.longitude,
+        );
+        setValue('pinLocation', locationString, { shouldValidate: true });
+      } catch (error) {
+        // Error toast is already shown by the hook
+        console.error('Forward geocoding failed:', error);
+      }
+    },
+    [forwardGeocodeMutation, setValue, formatLocation],
+  );
 
   return (
     <View style={styles.stepContent}>
       <Text style={styles.stepTitle}>Address Information</Text>
 
-          {/* Address Line */}
+      {/* Address Line */}
       <Controller
         control={control}
         name="address"
         render={({ field: { onChange, onBlur, value } }) => (
           <Input
             label="Address Line"
-                placeholder="Enter your street address"
+            placeholder="Enter your street address"
             value={value}
             onChangeText={onChange}
             onBlur={onBlur}
@@ -144,134 +157,140 @@ const StepAddress: React.FC<Props> = ({
         )}
       />
 
-          {/* Country */}
+      {/* Country */}
       <Controller
         control={control}
-              name="country"
-              render={({ field: { onChange, value } }) => (
-                  <Dropdown
-                      label="Country"
-                      placeholder="Select Country"
-                      data={countryOptions}
+        name="country"
+        render={({ field: { onChange, value } }) => (
+          <Dropdown
+            label="Country"
+            placeholder="Select Country"
+            data={countryOptions}
             value={value}
-                      onChange={onChange}
-                      labelField="label"
-                      valueField="value"
-                      errorMessage={errors.country?.message}
+            onChange={onChange}
+            labelField="label"
+            valueField="value"
+            errorMessage={errors.country?.message}
             containerStyle={styles.inputContainer}
           />
         )}
       />
 
-          {/* Zip Code */}
+      {/* Zip Code */}
       <Controller
         control={control}
-              name="postalCode"
+        name="postalCode"
         render={({ field: { onChange, onBlur, value } }) => (
           <Input
-                label="Zip Code"
-                placeholder="Enter ZIP Code"
+            label="Zip Code"
+            placeholder="Enter ZIP Code"
             value={value}
             onChangeText={onChange}
-            onBlur={(e) => {
+            onBlur={e => {
               onBlur(e);
               handleZipCodeBlur(value);
             }}
-                errorMessage={errors.postalCode?.message}
+            errorMessage={errors.postalCode?.message}
             containerStyle={styles.inputContainer}
-                keyboardType="numeric"
-                rightIcon={
-                  forwardGeocodeMutation.isPending ? (
-                    <ActivityIndicator size="small" color="#10B981" />
-                  ) : undefined
-                }
+            keyboardType="numeric"
+            rightIcon={
+              forwardGeocodeMutation.isPending ? (
+                <ActivityIndicator size="small" color="#10B981" />
+              ) : undefined
+            }
           />
         )}
       />
 
-          {/* City - Disabled, Auto-filled */}
+      {/* City - Disabled, Auto-filled */}
       <Controller
         control={control}
-              name="city"
-              render={({ field: { value } }) => (
-                  <Input
-                      label="City"
-                      placeholder="City"
-            value={value}
-                      editable={false}
-                      errorMessage={errors.city?.message}
-            containerStyle={styles.inputContainer}
-          />
-        )}
-      />
-
-          {/* State - Disabled, Auto-filled */}
-      <Controller
-        control={control}
-              name="state"
-              render={({ field: { value } }) => (
+        name="city"
+        render={({ field: { value } }) => (
           <Input
-                      label="State"
-                      placeholder="State"
+            label="City"
+            placeholder="City"
             value={value}
-                      editable={false}
-                      errorMessage={errors.state?.message}
+            editable={false}
+            errorMessage={errors.city?.message}
             containerStyle={styles.inputContainer}
           />
         )}
       />
 
-          {/* Pin Location */}
+      {/* State - Disabled, Auto-filled */}
+      <Controller
+        control={control}
+        name="state"
+        render={({ field: { value } }) => (
+          <Input
+            label="State"
+            placeholder="State"
+            value={value}
+            editable={false}
+            errorMessage={errors.state?.message}
+            containerStyle={styles.inputContainer}
+          />
+        )}
+      />
+
+      {/* Pin Location */}
       <Controller
         control={control}
         name="pinLocation"
-              render={({ field: { value } }) => (
-                  <View style={styles.inputContainer}>
-                      <View style={localStyles.pinLocationLabelContainer}>
-                          <Text style={styles.label}>Pin Location</Text>
-                          <Ionicons
-                              name="location"
-                              size={moderateScale(16)}
-                              color="#EF4444"
-                              style={localStyles.pinLocationIcon}
-                          />
-                          <Ionicons
-                              name="help-circle-outline"
-                              size={moderateScale(16)}
-                              color="#EF4444"
-                              style={localStyles.pinLocationIcon}
-                          />
-                      </View>
-                      <Input
-                          placeholder="Location (24.860700, 67.001100)"
-                          value={value || ''}
-                          editable={false}
-                          errorMessage={errors.pinLocation?.message}
-                          containerStyle={localStyles.pinLocationInputContainer}
-                          rightIcon={
-                              <TouchableOpacity onPress={handlePinLocationPress} activeOpacity={0.7}>
-                                  <View style={localStyles.pinLocationButton}>
-                                      <Ionicons name="locate" size={moderateScale(18)} color="#FFFFFF" />
-                                  </View>
-                              </TouchableOpacity>
-                          }
-                      />
+        render={({ field: { value } }) => (
+          <View style={styles.inputContainer}>
+            <View style={localStyles.pinLocationLabelContainer}>
+              <Text style={styles.label}>Pin Location</Text>
+              <Ionicons
+                name="location"
+                size={moderateScale(16)}
+                color="#EF4444"
+                style={localStyles.pinLocationIcon}
+              />
+              <Ionicons
+                name="help-circle-outline"
+                size={moderateScale(16)}
+                color="#EF4444"
+                style={localStyles.pinLocationIcon}
+              />
+            </View>
+            <Input
+              placeholder="Location (24.860700, 67.001100)"
+              value={value || ''}
+              editable={false}
+              errorMessage={errors.pinLocation?.message}
+              containerStyle={localStyles.pinLocationInputContainer}
+              rightIcon={
+                <TouchableOpacity
+                  onPress={handlePinLocationPress}
+                  activeOpacity={0.7}
+                >
+                  <View style={localStyles.pinLocationButton}>
+                    <Ionicons
+                      name="locate"
+                      size={moderateScale(18)}
+                      color="#FFFFFF"
+                    />
                   </View>
+                </TouchableOpacity>
+              }
+            />
+          </View>
         )}
       />
 
-          {/* Location Picker Modal */}
-          {isLocationPickerVisible && (
-              <LocationPicker
-                  isVisible={isLocationPickerVisible}
-                  onClose={() => setIsLocationPickerVisible(false)}
-                  onLocationSelect={handleLocationSelect}
-                  initialLocation={parsedLocation}
-              />
-          )}
+      {/* Location Picker Modal */}
+      {isLocationPickerVisible && (
+        <LocationPicker
+          isVisible={isLocationPickerVisible}
+          onClose={() => setIsLocationPickerVisible(false)}
+          onLocationSelect={handleLocationSelect}
+          initialLocation={parsedLocation}
+        />
+      )}
     </View>
   );
 };
 
 export default StepAddress;
-

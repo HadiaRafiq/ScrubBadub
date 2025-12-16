@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
-import { makeStyles, } from '@rneui/themed';
+import { makeStyles } from '@rneui/themed';
 
 import { Slide } from './onboardingData';
 
@@ -44,7 +44,7 @@ const OnboardingProgressDots: React.FC<OnboardingProgressDotsProps> = ({
   );
 };
 
-const useStyles = makeStyles(({
+const useStyles = makeStyles({
   progressContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -57,8 +57,6 @@ const useStyles = makeStyles(({
     borderRadius: moderateScale(4),
     // backgroundColor: theme.colors.accentLight,
   },
-}));
+});
 
 export default OnboardingProgressDots;
-
-

@@ -7,6 +7,7 @@ export interface ForwardGeocodeResult {
 
 export const isValidUSZipCode = (zipCode: string): boolean => {
   const zipRegex = /^\d{5}(-\d{4})?$/;
+
   return zipRegex.test(zipCode.trim());
 };
 
@@ -26,7 +27,9 @@ export const forwardGeocode = async (
 
   try {
     const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(cleanZipCode)}.json?access_token=${accessToken}&country=US&types=postcode&limit=1`,
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+        cleanZipCode,
+      )}.json?access_token=${accessToken}&country=US&types=postcode&limit=1`,
     );
 
     if (!response.ok) {
@@ -39,7 +42,7 @@ export const forwardGeocode = async (
       throw new Error('No results found for this zipcode');
     }
 
-    const feature = data.features[0];
+    const [feature] = data.features;
     const [longitude, latitude] = feature.center;
 
     let city: string | undefined;

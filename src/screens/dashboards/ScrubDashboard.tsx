@@ -2,8 +2,8 @@ import React from 'react';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
-import { makeStyles, Text, useTheme } from '@rneui/themed';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { makeStyles, Text, useTheme } from '@rneui/themed';
 
 import Header from '@/components/Header';
 import { useAuthStore } from '@/store/auth';
@@ -11,14 +11,15 @@ import { useAuthStore } from '@/store/auth';
 const ScrubDashboard = () => {
   const styles = useStyles();
   const { theme } = useTheme();
-    const { user } = useAuthStore();
+  const { user } = useAuthStore();
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-          <Header title="Dashboard" />
+      <Header title="Dashboard" />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.content}>
           <View style={styles.welcomeSection}>
             <Text style={styles.welcomeTitle}>Welcome, {user?.fullname}!</Text>
@@ -114,7 +115,7 @@ const useStyles = makeStyles(theme => ({
   welcomeTitle: {
     fontSize: moderateScale(28),
     fontWeight: '700',
-      color: theme.colors.grey2,
+    color: theme.colors.grey2,
     marginBottom: verticalScale(8),
   },
   welcomeSubtitle: {
@@ -144,7 +145,7 @@ const useStyles = makeStyles(theme => ({
   statValue: {
     fontSize: moderateScale(24),
     fontWeight: '700',
-      color: theme.colors.grey2,
+    color: theme.colors.grey2,
     marginTop: verticalScale(8),
     marginBottom: verticalScale(4),
   },
@@ -159,7 +160,7 @@ const useStyles = makeStyles(theme => ({
   sectionTitle: {
     fontSize: moderateScale(20),
     fontWeight: '600',
-      color: theme.colors.grey2,
+    color: theme.colors.grey2,
     marginBottom: verticalScale(16),
   },
   actionsGrid: {
@@ -185,11 +186,10 @@ const useStyles = makeStyles(theme => ({
   actionText: {
     fontSize: moderateScale(14),
     fontWeight: '500',
-      color: theme.colors.grey2,
+    color: theme.colors.grey2,
     marginTop: verticalScale(8),
     textAlign: 'center',
   },
 }));
 
 export default ScrubDashboard;
-

@@ -3,20 +3,20 @@ import { Controller, useForm } from 'react-hook-form';
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Theme } from '@rneui/base';
 import { makeStyles, Text, useTheme } from '@rneui/themed';
 import { z } from 'zod';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import Header from '@/components/Header';
 import Button from '@/components/Button';
 import Checkbox from '@/components/Checkbox';
+import Header from '@/components/Header';
 import Input from '@/components/Input';
+import { useSignin } from '@/hooks/useSignin';
 import { signInSchema } from '@/schemas/validationSchema';
 import { AUTH_ROUTES, AuthStackNavigatorParamList } from '@/types/routes';
-import { useSignin } from '@/hooks/useSignin';
 
 type SignInFormData = z.infer<typeof signInSchema>;
 
@@ -60,15 +60,19 @@ const SignIn = () => {
       <Header title="Sign In" isBack onBackPress={handleNavigateToSignUp} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}>
+        style={styles.keyboardView}
+      >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}>
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.content}>
             <View style={styles.titleContainer}>
               <Text style={styles.title}>Sign In</Text>
-              <Text style={styles.subtitle}>Welcome back! Please sign in to your account.</Text>
+              <Text style={styles.subtitle}>
+                Welcome back! Please sign in to your account.
+              </Text>
             </View>
 
             <View style={styles.form}>
@@ -134,12 +138,13 @@ const SignIn = () => {
                     checkedColor={theme.colors.primary}
                     uncheckedColor={theme.colors.grey4}
                   />
-                  <Text style={styles.keepSignedInText}>
-                    Keep me signed in
-                  </Text>
+                  <Text style={styles.keepSignedInText}>Keep me signed in</Text>
                 </View>
 
-                <Text style={styles.forgotPassword} onPress={handleForgotPassword}>
+                <Text
+                  style={styles.forgotPassword}
+                  onPress={handleForgotPassword}
+                >
                   Forgot Password?
                 </Text>
               </View>
@@ -151,7 +156,6 @@ const SignIn = () => {
                 disabled={signinMutation.isPending}
                 containerStyle={styles.buttonContainer}
               />
-
             </View>
 
             <View style={styles.footerSpacer} />
@@ -192,7 +196,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   title: {
     fontSize: moderateScale(24),
     fontWeight: 'bold',
-    color: (theme.colors as any).text || theme.colors.black || '#111',
+    color: theme.colors.black || '#111',
     marginBottom: verticalScale(8),
   },
   subtitle: {
@@ -206,7 +210,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: verticalScale(8),
   },
   iconColor: {
-    color: theme.colors.grey1
+    color: theme.colors.grey1,
   },
   inlineActions: {
     flexDirection: 'row',
@@ -219,7 +223,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: moderateScale(-8),
-
   },
   checkboxContainer: {
     padding: 0,

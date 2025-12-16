@@ -1,51 +1,50 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { makeStyles, useTheme } from '@rneui/themed';
 import { z } from 'zod';
+
 import Button from '@/components/Button';
 import Header from '@/components/Header';
 import Stepper, { Step } from '@/components/Stepper';
 import { useMultiStepForm } from '@/hooks/useMultiStepForm';
 import { AuthStackNavigatorParamList } from '@/types/routes';
 import { ROLES } from '@/types/user';
-import StepRole from './steps/StepRole';
-import StepDetails from './steps/StepDetails';
-import StepAddress from './steps/StepAddress';
-import StepAdditional from './steps/StepAdditional';
-import StepReview from './steps/StepReview';
 
-export const scrubSignUpSchema = z.object({
-  role: z.nativeEnum(ROLES).optional(),
-  fullName: z.string().min(1, 'Full name is required'),
-  email: z.string().email('Enter a valid email'),
-  gender: z.enum(['male', 'female', 'other']).optional(),
-  phone: z.string().min(6, 'Enter phone'),
-  otp: z.string().optional(),
-  dob: z.string().optional(),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string().min(1, 'Confirm your password'),
-  profileImage: z.string().optional(),
-  address: z.string().min(1, 'Address required'),
-  city: z.string().min(1, 'City required'),
-  state: z.string().min(1, 'State required'),
-  country: z.string().min(1, 'Country required'),
-  postalCode: z.string().min(1, 'Postal code required'),
-  pinLocation: z.string().optional(),
-  additionalInfo: z.string().optional(),
-}).refine(data => data.password === data.confirmPassword, {
-  message: 'Passwords do not match',
-  path: ['confirmPassword'],
-});
+import StepAdditional from './steps/StepAdditional';
+import StepAddress from './steps/StepAddress';
+import StepDetails from './steps/StepDetails';
+import StepReview from './steps/StepReview';
+import StepRole from './steps/StepRole';
+
+export const scrubSignUpSchema = z
+  .object({
+    role: z.nativeEnum(ROLES).optional(),
+    fullName: z.string().min(1, 'Full name is required'),
+    email: z.string().email('Enter a valid email'),
+    gender: z.enum(['male', 'female', 'other']).optional(),
+    phone: z.string().min(6, 'Enter phone'),
+    otp: z.string().optional(),
+    dob: z.string().optional(),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmPassword: z.string().min(1, 'Confirm your password'),
+    profileImage: z.string().optional(),
+    address: z.string().min(1, 'Address required'),
+    city: z.string().min(1, 'City required'),
+    state: z.string().min(1, 'State required'),
+    country: z.string().min(1, 'Country required'),
+    postalCode: z.string().min(1, 'Postal code required'),
+    pinLocation: z.string().optional(),
+    additionalInfo: z.string().optional(),
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
 
 export type ScrubSignUpForm = z.infer<typeof scrubSignUpSchema>;
 
@@ -86,7 +85,11 @@ const SignUp = () => {
   const [otpVerified, setOtpVerified] = useState(false);
 
   const steps: Step[] = useMemo(() => {
-    const base: Step[] = [{ label: 'Role' }, { label: 'Details' }, { label: 'Address' }];
+    const base: Step[] = [
+      { label: 'Role' },
+      { label: 'Details' },
+      { label: 'Address' },
+    ];
 
     switch (roleValue) {
       case ROLES.SCRUB:
@@ -100,6 +103,7 @@ const SignUp = () => {
         base.push({ label: 'Review' });
         break;
     }
+
     return base;
   }, [roleValue]);
 
@@ -145,9 +149,7 @@ const SignUp = () => {
   }, [currentStep]);
 
   const countryOptions = useMemo(
-    () => [
-      { label: 'United States', value: 'USA' },
-    ],
+    () => [{ label: 'United States', value: 'USA' }],
     [],
   );
 
@@ -180,7 +182,6 @@ const SignUp = () => {
         return (
           <StepAddress
             styles={styles}
-            theme={theme}
             control={control}
             errors={errors}
             countryOptions={countryOptions}
@@ -201,6 +202,7 @@ const SignUp = () => {
           );
         }
         // For Scrub and Duber, step 3 is role-specific
+
         return (
           <StepAdditional
             styles={styles}
@@ -225,8 +227,8 @@ const SignUp = () => {
     }
   };
 
-  const onSubmit = (values: ScrubSignUpForm) => {
-    console.log('Scrub signup form', values);
+  const onSubmit = (_values: ScrubSignUpForm) => {
+    // Handle form submission
   };
 
   return (
@@ -234,7 +236,8 @@ const SignUp = () => {
       <Header title="Sign Up" isBack onBackPress={() => navigation.goBack()} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}>
+        style={styles.keyboardView}
+      >
         <View style={styles.stepperContainer}>
           <Stepper steps={steps} currentStep={currentStep} />
         </View>
@@ -242,7 +245,8 @@ const SignUp = () => {
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}>
+          showsVerticalScrollIndicator={false}
+        >
           {renderStepContent()}
         </ScrollView>
 
@@ -252,7 +256,7 @@ const SignUp = () => {
               title="Back"
               onPress={previousStep}
               type="outline"
-                          containerStyle={styles.buttonContainer}
+              containerStyle={styles.buttonContainer}
             />
           )}
           {isLastStep ? (
@@ -263,12 +267,12 @@ const SignUp = () => {
               containerStyle={styles.buttonContainer}
             />
           ) : (
-              <Button
-                title="Continue"
-                onPress={nextStep}
-                disabled={currentStep === 1 && !otpVerified}
-                containerStyle={styles.buttonContainer}
-              />
+            <Button
+              title="Continue"
+              onPress={nextStep}
+              disabled={currentStep === 1 && !otpVerified}
+              containerStyle={styles.buttonContainer}
+            />
           )}
         </View>
       </KeyboardAvoidingView>
@@ -433,12 +437,12 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     gap: moderateScale(12),
     paddingHorizontal: moderateScale(20),
-      paddingVertical: verticalScale(16),
+    paddingVertical: verticalScale(16),
     backgroundColor: theme.colors.background,
   },
-    buttonContainer: {
+  buttonContainer: {
     flex: 1,
-    width:'50%'
+    width: '50%',
   },
   reviewCard: {
     borderWidth: 1,
@@ -484,4 +488,3 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default SignUp;
-

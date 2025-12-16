@@ -1,22 +1,21 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Theme } from '@rneui/base';
 import { makeStyles, Text } from '@rneui/themed';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { z } from 'zod';
 
 import Button from '@/components/Button';
 import Header from '@/components/Header';
 import Input from '@/components/Input';
+import { useForgotPassword } from '@/hooks/useForgotPassword';
 import { signInSchema } from '@/schemas/validationSchema';
 import { AuthStackNavigatorParamList } from '@/types/routes';
-import { useForgotPassword } from '@/hooks/useForgotPassword';
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
@@ -54,16 +53,19 @@ const ForgotPassword = () => {
       <Header title="" isBack onBackPress={handleNavigateBack} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}>
+        style={styles.keyboardView}
+      >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}>
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.content}>
             <View style={styles.titleContainer}>
               <Text style={styles.title}>Forgot Password</Text>
               <Text style={styles.subtitle}>
-                Enter your email address and we'll send you a link to reset your password.
+                Enter your email address and we'll send you a link to reset your
+                password.
               </Text>
             </View>
 

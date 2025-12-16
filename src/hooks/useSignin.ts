@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+
 import { signIn, SignInRequest, SignInResponse } from '@/api/authService';
 import { useAuthStore } from '@/store/auth';
 import { showSuccessToast } from '@/utils/toast';
@@ -10,7 +11,6 @@ export const useSignin = () => {
     mutationFn: signIn,
     onSuccess: response => {
       if (response.status && response.data) {
-        console.log(response.data);
         setUser(response.data.user);
         setToken(response.data.authToken);
         showSuccessToast('Signin successful');
@@ -19,4 +19,3 @@ export const useSignin = () => {
     },
   });
 };
-

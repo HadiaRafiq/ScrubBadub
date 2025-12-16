@@ -1,5 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
+
 import { sendEmailOtp } from '@/api/authService';
 import { showSuccessToast } from '@/utils/toast';
 
@@ -31,4 +32,3 @@ export const useSendEmailOtp = () => {
     reset,
   };
 };
-

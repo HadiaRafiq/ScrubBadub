@@ -1,12 +1,9 @@
 import React from 'react';
-import {
-  ScrollView,
-  View,
-} from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { Text, makeStyles } from '@rneui/themed';
+import { makeStyles, Text } from '@rneui/themed';
 
 import Button from '@/components/Button';
 import { AUTH_ROUTES, AuthStackNavigatorParamList } from '@/types/routes';
@@ -38,9 +35,9 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
 };
 
 const Welcome = () => {
-    const styles = useStyles();
-    const navigation =
-        useNavigation<NavigationProp<AuthStackNavigatorParamList>>();
+  const styles = useStyles();
+  const navigation =
+    useNavigation<NavigationProp<AuthStackNavigatorParamList>>();
 
   // Simple icon components (can be replaced with proper icons later)
   const CustomerIcon = () => (
@@ -62,18 +59,19 @@ const Welcome = () => {
   );
 
   const handleGetStarted = () => {
-      navigation.navigate(AUTH_ROUTES.SIGNUP);
+    navigation.navigate(AUTH_ROUTES.SIGNUP);
   };
 
   const handleAlreadyHaveAccount = () => {
-      navigation.navigate(AUTH_ROUTES.SIGNIN);
+    navigation.navigate(AUTH_ROUTES.SIGNIN);
   };
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+      >
         {/* Gradient Background */}
         <View style={styles.gradientContainer}>
           {/* Header Section */}
@@ -134,7 +132,7 @@ const Welcome = () => {
   );
 };
 
-const useStyles = makeStyles(({
+const useStyles = makeStyles({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -156,13 +154,13 @@ const useStyles = makeStyles(({
   mainTitle: {
     fontSize: moderateScale(32),
     fontWeight: '700',
-      // color: theme.colors.text,
+    // color: theme.colors.text,
     textAlign: 'center',
     marginBottom: verticalScale(12),
   },
   subtitle: {
     fontSize: moderateScale(16),
-      // color: theme.colors.text,
+    // color: theme.colors.text,
     textAlign: 'center',
     lineHeight: moderateScale(24),
     paddingHorizontal: moderateScale(8),
@@ -205,13 +203,13 @@ const useStyles = makeStyles(({
   cardTitle: {
     fontSize: moderateScale(16),
     fontWeight: '700',
-      // color: theme.colors.text,
+    // color: theme.colors.text,
     textAlign: 'center',
     marginBottom: verticalScale(8),
   },
   cardDescription: {
     fontSize: moderateScale(14),
-      // color: theme.colors.text,
+    // color: theme.colors.text,
     textAlign: 'center',
     lineHeight: moderateScale(20),
   },
@@ -233,7 +231,7 @@ const useStyles = makeStyles(({
   ctaTitle: {
     fontSize: moderateScale(20),
     fontWeight: '700',
-      // color: theme.colors.text,
+    // color: theme.colors.text,
     marginBottom: verticalScale(20),
     textAlign: 'center',
   },
@@ -246,11 +244,10 @@ const useStyles = makeStyles(({
   },
   trustStatement: {
     fontSize: moderateScale(14),
-      // color: theme.colors.text,
+    // color: theme.colors.text,
     textAlign: 'center',
     lineHeight: moderateScale(20),
   },
-}));
+});
 
 export default Welcome;
-

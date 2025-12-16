@@ -1,5 +1,6 @@
-import axiosInstance from './axiosInstance';
 import { User } from '@/types/user';
+
+import axiosInstance from './axiosInstance';
 
 export interface SignInRequest {
   email: string;
@@ -15,6 +16,25 @@ export interface SignInResponse {
   };
 }
 
+export interface Address {
+  street?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface LaundryFacilityDetails {
+  name?: string;
+  description?: string;
+  [key: string]: unknown;
+}
+
+export interface Equipment {
+  [key: string]: unknown;
+}
+
 export interface SignUpRequest {
   email: string;
   password: string;
@@ -24,11 +44,11 @@ export interface SignUpRequest {
   emailOtp?: string;
   gender?: string;
   dateOfBirth?: string;
-  address?: any;
-  profileImage?: any;
-  laundryFacilityImages?: any[];
-  laundryFacilityDetails?: any;
-  equipments?: any;
+  address?: Address;
+  profileImage?: string;
+  laundryFacilityImages?: string[];
+  laundryFacilityDetails?: LaundryFacilityDetails;
+  equipments?: Equipment;
   isSmokeFree?: boolean;
 }
 
@@ -48,7 +68,7 @@ export interface ForgotPasswordRequest {
 export interface ForgotPasswordResponse {
   status: boolean;
   message?: string;
-  data?: any;
+  data?: Record<string, unknown>;
 }
 
 export const signIn = async (
@@ -129,4 +149,4 @@ export const forgotPassword = async (
   throw new Error(
     response.data?.message || 'Failed to send password reset email',
   );
-};  
+};

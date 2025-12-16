@@ -17,11 +17,7 @@ import { makeStyles } from '@rneui/themed';
 
 import OnboardingRail from '@/assets/svgs/OnboardingRail';
 import { useOnboardingStore } from '@/store/onboarding';
-import {
-  AUTH_ROUTES,
-  RootStackParamList,
-  STACKS,
-} from '@/types/routes';
+import { AUTH_ROUTES, RootStackParamList, STACKS } from '@/types/routes';
 
 import OnboardingCTA from './OnboardingCTA';
 import { Slide, slides } from './onboardingData';
@@ -122,7 +118,7 @@ const Onboarding = () => {
   );
 };
 
-const useStyles = makeStyles(({
+const useStyles = makeStyles({
   container: {
     flex: 1,
     // backgroundColor: theme.colors.grey2,
@@ -146,8 +142,6 @@ const useStyles = makeStyles(({
     zIndex: 1,
     paddingRight: moderateScale(32),
   },
-}));
+});
 
 export default Onboarding;
-
-
