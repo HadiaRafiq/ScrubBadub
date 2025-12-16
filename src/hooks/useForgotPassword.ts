@@ -5,15 +5,19 @@ import {
   ForgotPasswordResponse,
 } from '@/api/authService';
 import { showSuccessToast } from '@/utils/toast';
+import { AUTH_ROUTES, AuthStackNavigatorParamList } from '@/types/routes';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 export const useForgotPassword = () => {
+  const navigation =
+    useNavigation<NavigationProp<AuthStackNavigatorParamList>>();
+
   return useMutation<ForgotPasswordResponse, Error, ForgotPasswordRequest>({
     mutationFn: forgotPassword,
     onSuccess: response => {
       if (response.status) {
-        showSuccessToast(
-          'Password reset email sent. Please check your inbox.',
-        );
+        showSuccessToast('Password reset email sent. Please check your inbox.');
+        navigation.navigate(AUTH_ROUTES.SIGNIN);
       }
     },
   });

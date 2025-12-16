@@ -1,8 +1,8 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import DuberDashboard from '@/screens/dashboards/DuberDashboard';
 import MyDeliveries from '@/screens/duber/MyDeliveries';
 import PlaceOrder from '@/screens/duber/PlaceOrder';
 import MyOrders from '@/screens/duber/MyOrders';
@@ -10,14 +10,16 @@ import DuberProfile from '@/screens/duber/Profile';
 import { BUD_ROUTES, BudStackParamList } from '@/types/routes';
 import { useAuthStore } from '@/store/auth';
 import { ROLES } from '@/types/user';
+import BudDashboard from '@/screens/dashboards/BudDashboard';
 
 const Tab = createBottomTabNavigator<BudStackParamList>();
 
 const BudStack = () => {
     const { user, token } = useAuthStore();
 
-    // Guard: only render tabs when authenticated as Duber
-    if (!token || user?.role !== ROLES.DUBER) {
+    // Guard: only render tabs when authenticated as BUD
+    console.log(user?.role);
+    if (!token || user?.role !== ROLES.BUD) {
         return null;
     }
 
@@ -62,7 +64,7 @@ const BudStack = () => {
           })}>
           <Tab.Screen
               name={BUD_ROUTES.HOME}
-              component={DuberDashboard}
+              component={BudDashboard}
               options={{ tabBarLabel: 'Home' }}
           />
           <Tab.Screen

@@ -10,9 +10,10 @@ export const useSignin = () => {
     mutationFn: signIn,
     onSuccess: response => {
       if (response.status && response.data) {
+        console.log(response.data);
         setUser(response.data.user);
         setToken(response.data.token);
-        showSuccessToast('Signup successful');
+        showSuccessToast('Signin successful');
         // Navigation will automatically switch to authenticated stack via AppNavigator
       }
     },

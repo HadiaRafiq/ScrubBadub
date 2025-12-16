@@ -1,3 +1,4 @@
+import { ROLES } from '@/types/user';
 import { z } from 'zod';
 
 export const signInSchema = z.object({
@@ -27,7 +28,7 @@ export const signUpSchema = z
       .string()
       .min(1, 'Phone number is required')
       .regex(/^\+?[\d\s-()]+$/, 'Please enter a valid phone number'),
-    role: z.enum(['Scrub', 'Bud', 'Duber'], {
+    role: z.enum([ROLES.SCRUB, ROLES.BUD, ROLES.DUBER], {
       errorMap: () => ({ message: 'Please select a role' }),
     }),
   })
@@ -35,5 +36,3 @@ export const signUpSchema = z
     message: 'Passwords do not match',
     path: ['confirmPassword'],
   });
-
-

@@ -14,7 +14,7 @@ const ScrubStack = () => {
         animation: 'slide_from_right',
       }}>
       <Stack.Screen
-        name={SCRUB_ROUTES.DASHBOARD}
+              name={SCRUB_ROUTES.HOME}
         component={ScrubDashboard}
       />
     </Stack.Navigator>

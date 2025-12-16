@@ -83,7 +83,7 @@ const SignIn = () => {
                       <Ionicons
                         name="mail-outline"
                         size={moderateScale(20)}
-                        // color={styles.iconColor.color}
+                        color={styles.iconColor.color}
                       />
                     }
                     value={value}

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -5,7 +6,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import DuberDashboard from '@/screens/dashboards/DuberDashboard';
 import MyDeliveries from '@/screens/duber/MyDeliveries';
 import PlaceOrder from '@/screens/duber/PlaceOrder';
-import MyOrders from '@/screens/duber/MyOrders';
 import DuberProfile from '@/screens/duber/Profile';
 import { DuberStackParamList, DUBER_ROUTES } from '@/types/routes';
 import { useAuthStore } from '@/store/auth';
@@ -42,17 +42,11 @@ const DuberStack = () => {
                       case DUBER_ROUTES.HOME:
                           iconName = 'home-outline';
                           break;
-                      case DUBER_ROUTES.MY_DELIVERIES:
+                      case DUBER_ROUTES.HISTORY:
                           iconName = 'cube-outline';
                           break;
-                      case DUBER_ROUTES.PLACE_ORDER:
+                      case DUBER_ROUTES.ORDERS:
                           iconName = 'add-circle-outline';
-                          break;
-                      case DUBER_ROUTES.MY_ORDERS:
-                          iconName = 'briefcase-outline';
-                          break;
-                      case DUBER_ROUTES.PROFILE:
-                          iconName = 'person-outline';
                           break;
                       default:
                           break;
@@ -66,19 +60,14 @@ const DuberStack = () => {
               options={{ tabBarLabel: 'Home' }}
           />
           <Tab.Screen
-              name={DUBER_ROUTES.MY_DELIVERIES}
+              name={DUBER_ROUTES.HISTORY}
               component={MyDeliveries}
               options={{ tabBarLabel: 'My Deliveries' }}
-          />
+          />    
           <Tab.Screen
-              name={DUBER_ROUTES.PLACE_ORDER}
+              name={DUBER_ROUTES.ORDERS}
               component={PlaceOrder}
               options={{ tabBarLabel: 'Place Order' }}
-          />
-          <Tab.Screen
-              name={DUBER_ROUTES.MY_ORDERS}
-              component={MyOrders}
-              options={{ tabBarLabel: 'My Orders' }}
           />
           <Tab.Screen
               name={DUBER_ROUTES.PROFILE}

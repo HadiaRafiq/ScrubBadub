@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemeProvider } from '@rneui/themed';
 import { QueryClientProvider } from '@tanstack/react-query';
+import Toast from 'react-native-toast-message';
 
 import AppNavigator from '@/navigation/AppNavigator';
 import { theme } from '@/theme';
@@ -20,6 +21,7 @@ function App() {
           <ThemeProvider theme={theme}>
             <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
             <AppNavigator />
+            <Toast />
           </ThemeProvider>
         </SafeAreaProvider>
       </GestureHandlerRootView>
