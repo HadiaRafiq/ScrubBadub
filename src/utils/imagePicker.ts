@@ -1,6 +1,10 @@
-import { Platform, Alert, Linking } from 'react-native';
-import { PermissionsAndroid } from 'react-native';
-import { launchImageLibrary, MediaType, Asset } from 'react-native-image-picker';
+import { Platform, Alert, Linking, PermissionsAndroid } from 'react-native';
+import {
+  launchImageLibrary,
+  MediaType,
+  Asset,
+  ImagePickerResponse,
+} from 'react-native-image-picker';
 
 const requestGalleryPermission = async () => {
   if (Platform.OS === 'android') {
@@ -54,30 +58,49 @@ const requestGalleryPermission = async () => {
   return true;
 };
 
-export const pickImage = async (): Promise<Asset | null> => {
-  const granted = await requestGalleryPermission();
+export const pickImage = (): Promise<Asset | null> => {
+  return new Promise(async resolve => {
+    const granted = await requestGalleryPermission();
 
-  if (!granted) {
-    Alert.alert(
-      'Permission denied',
-      'Please grant permission to access your gallery',
+    if (!granted) {
+      Alert.alert(
+        'Permission denied',
+        'Please grant permission to access your gallery',
+      );
+      resolve(null);
+      return;
+    }
+
+    launchImageLibrary(
+      {
+        mediaType: 'photo' as MediaType,
+        quality: 0.8,
+        includeBase64: true,
+        selectionLimit: 1,
+        includeExtra: true,
+      },
+      (result: ImagePickerResponse) => {
+        if (result.didCancel) {
+          resolve(null);
+          return;
+        }
+
+        if (result.errorCode) {
+          Alert.alert(
+            'Image Picker',
+            result.errorMessage || 'Unable to pick image',
+          );
+          resolve(null);
+          return;
+        }
+
+        if (result.assets && result.assets.length > 0) {
+          resolve(result.assets[0]);
+          return;
+        }
+
+        resolve(null);
+      },
     );
-
-    return null;
-  }
-
-  const result = await launchImageLibrary({
-    mediaType: 'photo' as MediaType,
-    quality: 0.8,
-    includeBase64: true,
-    selectionLimit: 1,
-    includeExtra: true,
   });
-
-  if (result?.assets && result.assets.length > 0) {
-    return result.assets[0];
-  }
-
-  return null;
 };
-
